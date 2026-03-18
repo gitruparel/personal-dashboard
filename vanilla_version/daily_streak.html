@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workspace | Personal Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg: #050505;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --card-border: rgba(255, 255, 255, 0.05);
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --accent: #ffffff;
+            --accent-glow: rgba(255, 255, 255, 0.15);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 4px;
+            border-radius: 4px;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 60px 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Blur Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            opacity: 0.4;
+            will-change: transform, opacity;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+        .orb-1 {
+            width: 30vw;
+            height: 30vw;
+            background: rgba(255, 255, 255, 0.1);
+            top: -10%;
+            left: -10%;
+        }
+        .orb-2 {
+            width: 40vw;
+            height: 40vw;
+            background: rgba(255, 255, 255, 0.05);
+            bottom: -20%;
+            right: -10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(30px) scale(1.05); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1500px;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+
+        header {
+            grid-column: span 12;
+            margin-bottom: 20px;
+            animation: fadeDown 0.8s ease-out forwards;
+        }
+
+        .left-panel {
+            grid-column: span 8;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+            align-content: start;
+        }
+
+        .right-panel {
+            grid-column: span 4;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .greeting {
+            font-size: 2.8rem;
+            font-weight: 600;
+            letter-spacing: -1px;
+            transition: color 0.5s ease;
+        }
+
+        .date-time {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-top: 8px;
+            font-weight: 300;
+        }
+
+        .mini-motto {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.95rem;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 35px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+            will-change: transform, box-shadow;
+            animation: fadeUp 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 30px var(--accent-glow);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 25px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: 1px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+        }
+
+        .neet-card { grid-column: span 12; }
+        .checklist-card { grid-column: span 7; display: flex; flex-direction: column; }
+        .rules-card { grid-column: span 5; }
+
+        @media (max-width: 1000px) {
+            .left-panel { grid-column: span 12; }
+            .right-panel { grid-column: span 12; }
+        }
+
+        @media (max-width: 800px) {
+            body { padding: 40px 15px; }
+            .streak-card, .neet-card, .checklist-card, .rules-card { grid-column: span 12; }
+            .greeting { font-size: 2rem; }
+        }
+
+        /* Streak UI */
+        .streak-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .streak-number {
+            font-size: 5rem;
+            font-weight: 700;
+            text-shadow: 0 0 30px var(--accent-glow);
+            line-height: 1;
+            margin-bottom: 5px;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s;
+        }
+        
+        .streak-label {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            margin-top: 30px;
+            width: 100%;
+            padding: 16px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: white;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+
+        .action-btn:hover {
+            background: white;
+            color: black;
+            box-shadow: 0 0 25px rgba(255,255,255,0.4);
+            border-color: white;
+        }
+        
+        .action-btn:active {
+            transform: scale(0.96);
+        }
+
+        .action-btn.completed {
+            background: white;
+            color: black;
+            box-shadow: 0 0 25px rgba(255,255,255,0.4);
+            border-color: white;
+        }
+
+        .action-btn.completed::before {
+            display: none;
+        }
+        
+        .action-btn.completed:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 35px rgba(255,255,255,0.6);
+        }
+
+        /* Activity Graph */
+        .activity-card {
+            display: flex;
+            flex-direction: column;
+        }
+        .activity-graph {
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            gap: 6px;
+            margin-top: 15px;
+        }
+        .activity-square {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s, background 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        .activity-square:hover {
+            transform: scale(1.2);
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+        .activity-level-1 { background: rgba(255, 255, 255, 0.2); }
+        .activity-level-2 { background: rgba(255, 255, 255, 0.4); }
+        .activity-level-3 { background: rgba(255, 255, 255, 0.6); }
+        .activity-level-4 { background: rgba(255, 255, 255, 0.8); }
+        .activity-level-5 { background: #39d353; box-shadow: 0 0 15px rgba(57, 211, 83, 0.4); }
+
+        /* Stats Card */
+        .stats-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            animation: fadeUp 0.8s ease-out forwards;
+            animation-delay: 0.2s;
+            opacity: 0;
+            margin-top: 25px;
+        }
+        
+        .stats-card h3 {
+            margin: 0 0 20px 0;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .stat-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .stat-val {
+            font-weight: 700;
+            color: #fff;
+            font-size: 1.1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Progress bar */
+        .progress-wrapper {
+            margin: 25px 0;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: white;
+            width: 0%;
+            border-radius: 10px;
+            transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 0 15px rgba(255,255,255,0.6);
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex-grow: 1;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+        }
+
+        .checklist-item:hover {
+            background: rgba(255,255,255,0.04);
+            transform: translateX(5px);
+        }
+
+        .check-box {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 7px;
+            margin-right: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            flex-shrink: 0;
+        }
+
+        .checklist-item.done .check-box {
+            background: white;
+            border-color: white;
+        }
+
+        .checklist-item.done .check-box::after {
+            content: '✓';
+            color: black;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .checklist-item.done .item-text {
+            text-decoration: line-through;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .item-text {
+            font-size: 1.05rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+        }
+
+        /* Rules & Strategy */
+        .rules-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        
+        .rule-item {
+            background: rgba(255,255,255,0.02);
+            padding: 20px;
+            border-radius: 14px;
+            border-left: 3px solid rgba(255,255,255,0.6);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #ccc;
+            transition: all 0.3s ease;
+        }
+
+        .rule-item:hover {
+            border-left-color: white;
+            background: rgba(255,255,255,0.05);
+            transform: translateX(4px);
+        }
+
+        .rule-item b {
+            color: white;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.05rem;
+        }
+
+        .undo-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 10px;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.3s;
+            width: 100%;
+            text-align: center;
+            display: none;
+        }
+
+        .undo-btn:hover {
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        
+        /* Streak History Visuals */
+        .streak-history {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        .history-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .history-dot.active {
+            background: white;
+            box-shadow: 0 0 12px rgba(255,255,255,0.8);
+            transform: scale(1.1);
+        }
+
+        .reset-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            border-radius: 10px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+
+        .reset-btn:hover {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.3);
+            transform: rotate(-15deg) scale(1.1);
+        }
+
+        /* Settings Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .settings-task-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+            cursor: grab;
+        }
+
+        .settings-task-item:active {
+            cursor: grabbing;
+        }
+
+        .settings-task-item.dragging {
+            opacity: 0.5;
+            background: rgba(255,255,255,0.1);
+            transform: scale(0.98);
+        }
+
+        .settings-task-item:hover {
+            background: rgba(255,255,255,0.06);
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .icon-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .icon-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .orb.explode {
+            animation: orbExplode 1s ease-out forwards;
+        }
+
+        @keyframes orbExplode {
+            0% { transform: scale(1); filter: blur(100px); opacity: 0.4; background: rgba(57, 211, 83, 0.5); }
+            50% { transform: scale(4); filter: blur(50px); opacity: 0.8; background: rgba(57, 211, 83, 0.8); }
+            100% { transform: scale(0); filter: blur(100px); opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Hidden SVG Spritesheet -->
+    <svg style="display: none;">
+        <symbol id="icon-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+        </symbol>
+        <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </symbol>
+        <symbol id="icon-neetcode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline>
+        </symbol>
+        <symbol id="icon-checklist" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>
+        </symbol>
+        <symbol id="icon-rules" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </symbol>
+        <symbol id="icon-momentum" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </symbol>
+        <symbol id="icon-activity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+        </symbol>
+        <symbol id="icon-drag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line>
+        </symbol>
+    </svg>
+
+    <div class="orb orb-1" id="orb1"></div>
+    <div class="orb orb-2" id="orb2"></div>
+
+    <div class="container">
+        <header style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <div class="greeting" id="greeting">Loading...</div>
+                <div class="date-time" id="datetime">Loading...</div>
+                <div class="mini-motto" id="motto">Initializing workspace...</div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="reset-btn" id="btnSettings" aria-label="Open Settings" title="Settings">
+                    <svg width="20" height="20"><use href="#icon-settings"></use></svg>
+                </button>
+                <button class="reset-btn" id="btnResetHistory" aria-label="Reset All Progress" title="Reset All Progress">
+                    <svg width="20" height="20"><use href="#icon-refresh"></use></svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="left-panel">
+            <!-- NeetCode Card -->
+            <div class="card neet-card delay-2">
+                <h2 style="position: relative;">
+                    <svg id="neetcodeIcon" style="cursor: pointer;" width="20" height="20" tabindex="0" aria-label="NeetCode interactions"><use href="#icon-neetcode"></use></svg>
+                    NeetCode 150
+                </h2>
+                <div style="font-size: 3rem; font-weight: 700; text-align: center; margin: 15px 0; text-shadow: 0 0 30px rgba(255,255,255,0.1); transition: transform 0.3s;" id="neetBig">0</div>
+                <div class="progress-wrapper">
+                    <div class="progress-stats">
+                        <span style="font-weight: 600; color: white;">Progress</span>
+                        <span id="neetCount" style="color: white;">0 / 150</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="progressBar"></div>
+                    </div>
+                </div>
+                <button class="action-btn" id="btnAddProblem">Log Solved Problem</button>
+                <button class="undo-btn" id="undoProblemBtn">Undo last log</button>
+            </div>
+
+            <!-- Checklist Card -->
+            <div class="card checklist-card delay-3">
+                <h2>
+                    <svg width="20" height="20"><use href="#icon-checklist"></use></svg>
+                    Daily Focus
+                </h2>
+                <ul class="checklist" id="checklist">
+                    <!-- Checklist items generated by JS -->
+                </ul>
+            </div>
+
+            <!-- Rules Card -->
+            <div class="card rules-card delay-4">
+                <h2>
+                    <svg width="20" height="20"><use href="#icon-rules"></use></svg>
+                    Core Principles
+                </h2>
+                <ul class="rules-list">
+                    <li class="rule-item"><b>Feynman Method</b> Learn → Explain simply → Apply → Relearn gaps.</li>
+                    <li class="rule-item"><b>Implementation Rule</b> After every 2 lectures, build a mini project. Watching ≠ Learning.</li>
+                    <li class="rule-item"><b>Consistency</b> Missing a day is a mistake. Missing two is a choice.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <!-- Streak Card -->
+            <div class="card streak-card delay-1">
+                <h2>
+                    <svg id="momentumIcon" style="cursor: pointer; transition: transform 0.2s;" width="20" height="20" tabindex="0" aria-label="Momentum interactions"><use href="#icon-momentum"></use></svg>
+                    Momentum
+                </h2>
+                <div class="streak-container">
+                    <div class="streak-number" id="streak">0</div>
+                    <div class="streak-label">Day Streak</div>
+                    <div class="streak-history" id="streakHistory">
+                        <!-- Dots will be populated by JS -->
+                    </div>
+                </div>
+                <button class="action-btn" id="completeBtn">Mark Day Complete</button>
+                <button class="undo-btn" id="undoStreakBtn">Undo completion</button>
+            </div>
+
+            <!-- Activity Graph Card -->
+            <div class="card activity-card delay-4">
+                <h2>
+                    <svg width="20" height="20"><use href="#icon-activity"></use></svg>
+                    Activity (Last 3 Months)
+                </h2>
+                <div class="activity-graph" id="activityGraph"></div>
+            </div>
+
+            <!-- Weekly Stats Summary Card -->
+            <div class="stats-card" id="statsCard">
+                <h3>Last Week's Stats</h3>
+                <div class="stat-row">
+                    <span>Tasks Completed</span>
+                    <span class="stat-val" id="statTasks">0</span>
+                </div>
+                <div class="stat-row">
+                    <span>Perfect Days</span>
+                    <span class="stat-val" id="statPerfect">0</span>
+                </div>
+                <div class="stat-row">
+                    <span>Consistency</span>
+                    <span class="stat-val" id="statConsistency">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content card" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+            <h2 id="settingsModalTitle" style="margin-bottom: 20px;">
+                <svg width="20" height="20"><use href="#icon-settings"></use></svg>
+                Manage Daily Focus Tasks
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Drag to reorder your checklist priorities.</p>
+            
+            <div id="settingsTaskList" style="margin-bottom: 20px;">
+                <!-- Dynamically populated -->
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 25px;">
+                <input type="text" id="newTaskInput" placeholder="New Task Name" style="flex-grow: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; padding: 10px; outline: none; font-size: 0.95rem;">
+                <button id="btnAddTask" style="background: white; color: black; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; cursor: pointer;">Add</button>
+            </div>
+            
+            <button class="action-btn" id="btnCloseSettings" style="margin-top: 0;">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // ----------------------------------------------------
+        // Advanced State Management & Architecture
+        // ----------------------------------------------------
+        const VERSION = "1.0";
+        
+        const Storage = {
+            get: (key, def) => {
+                try {
+                    const parsed = JSON.parse(localStorage.getItem(key));
+                    return parsed !== null ? parsed : def;
+                } catch(e) { 
+                    return localStorage.getItem(key) || def; 
+                }
+            },
+            set: (key, val) => localStorage.setItem(key, typeof val === 'object' ? JSON.stringify(val) : val),
+            remove: (key) => localStorage.removeItem(key),
+            clear: () => localStorage.clear(),
+            initVersion: () => {
+                const currentVer = localStorage.getItem("appVersion");
+                if(!currentVer) {
+                    localStorage.setItem("appVersion", VERSION);
+                    // Hook for future migrations: if(currentVer < "2.0") migrateData();
+                }
+            }
+        };
+
+        const Utils = {
+            today: () => new Date().toISOString().slice(0, 10),
+            
+            completedTasks: (checklistState) => Object.values(checklistState).filter(Boolean).length,
+            
+            percent: (a, b) => b === 0 ? 0 : (a / b) * 100,
+            
+            getDateOffset: (daysOffset) => {
+                const d = new Date();
+                d.setDate(d.getDate() - daysOffset);
+                return d.toISOString().slice(0, 10);
+            },
+            
+            formatReadableDate: (d) => {
+                const options = { weekday: 'long', month: 'long', day: 'numeric' };
+                return d.toLocaleDateString(undefined, options);
+            }
+        };
+
+        const defaultTasks = [
+            { id: 'ai', text: 'AI Lecture' },
+            { id: 'algo', text: 'Algorithms Lecture' },
+            { id: 'nc', text: 'NeetCode 150 Problem' },
+            { id: 'gym', text: 'Gym / Workout' },
+            { id: 'build', text: 'Build / Project Work' }
+        ];
+
+        // Centralized Predictable State
+        const State = {
+            tasks: Storage.get('tasks', defaultTasks),
+            streak: parseInt(Storage.get("streak", 0)),
+            lastDate: Storage.get("lastDate", ""),
+            prevStreak: Storage.get("prevStreak", null),
+            prevDate: Storage.get("prevDate", null),
+            problems: parseInt(Storage.get("problems", 0)),
+            checklist: Storage.get(`checklist_${Utils.today()}`, {}),
+            activity: Storage.get('dailyActivity', {})
+        };
+        
+        // Sync today perfectly upon load
+        State.activity[Utils.today()] = Utils.completedTasks(State.checklist);
+        Storage.set('dailyActivity', State.activity);
+
+        // Cache DOM references to prevent unnecessary querying
+        const DOM = {};
+
+        // ----------------------------------------------------
+        // Renderer Controller System
+        // ----------------------------------------------------
+        const Renderer = {
+            refresh: function() {
+                this.streak();
+                this.progress();
+                this.checklist();
+                this.activity();
+            },
+            
+            streak: function() {
+                DOM.streak.innerText = State.streak;
+                
+                // Status checks
+                const btn = DOM.completeBtn;
+                const undoBtn = DOM.undoStreakBtn;
+                
+                btn.style.background = "";
+                btn.style.color = "";
+                btn.style.boxShadow = "";
+                btn.style.borderColor = "";
+
+                if (Utils.today() === State.lastDate) {
+                    btn.innerText = "Day Completed ✓";
+                    btn.classList.add("completed");
+                    if (State.prevStreak !== null && State.prevDate !== null) {
+                        undoBtn.style.display = "block";
+                    } else undoBtn.style.display = "none";
+                } else {
+                    btn.innerText = "Mark Day Complete";
+                    btn.classList.remove("completed");
+                    undoBtn.style.display = "none";
+                }
+
+                // History Dots render
+                DOM.streakHistory.innerHTML = '';
+                const fragment = document.createDocumentFragment();
+                let activeDots = Math.min(State.streak, 7);
+
+                for (let i = 0; i < 7; i++) {
+                    const dot = document.createElement("div");
+                    dot.className = "history-dot";
+                    if (i < activeDots) dot.classList.add("active");
+                    fragment.appendChild(dot);
+                }
+                DOM.streakHistory.appendChild(fragment);
+            },
+            
+            progress: function() {
+                DOM.neetBig.innerText = State.problems;
+                DOM.neetCount.innerText = `${State.problems} / 150`;
+                let percent = Utils.percent(State.problems, 150);
+                setTimeout(() => DOM.progressBar.style.width = percent + "%", 100);
+            },
+            
+            checklist: function() {
+                DOM.checklist.innerHTML = "";
+                const fragment = document.createDocumentFragment();
+                
+                State.tasks.forEach(task => {
+                    const isCompleted = State.checklist[task.id] === true;
+                    
+                    const li = document.createElement("li");
+                    li.className = `checklist-item ${isCompleted ? 'done' : ''}`;
+                    li.setAttribute("role", "checkbox");
+                    li.setAttribute("aria-checked", isCompleted ? "true" : "false");
+                    li.tabIndex = 0;
+                    
+                    li.addEventListener("keydown", (e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            toggleTask(task.id, li);
+                        }
+                    });
+                    li.onclick = () => toggleTask(task.id, li);
+                    
+                    li.innerHTML = `
+                        <div class="check-box"></div>
+                        <span class="item-text">${task.text}</span>
+                    `;
+                    fragment.appendChild(li);
+                });
+                
+                DOM.checklist.appendChild(fragment);
+            },
+            
+            activity: function() {
+                if(!DOM.activityGraph) return;
+                
+                let totalTasks = State.tasks.length;
+                let weeklyTasksSum = 0;
+                let weeklyActiveDays = 0;
+                let weeklyPerfectDays = 0;
+                
+                DOM.activityGraph.innerHTML = "";
+                const fragment = document.createDocumentFragment();
+                
+                // Render Graph (90 days)
+                for (let i = 89; i >= 0; i--) {
+                    let dateIso = Utils.getDateOffset(i);
+                    let count = State.activity[dateIso] || 0;
+                    
+                    // Track weekly stats strictly for previous week (offsets 1-7 from today)
+                    if (i >= 1 && i <= 7) {
+                        weeklyTasksSum += count;
+                        if (count > 0) weeklyActiveDays++;
+                        if (count >= totalTasks && totalTasks > 0) weeklyPerfectDays++;
+                    }
+                    
+                    let square = document.createElement("div");
+                    square.className = "activity-square";
+                    
+                    if (count > 0 && count < totalTasks && totalTasks > 0) {
+                        let level = Math.ceil((count / totalTasks) * 4); 
+                        square.classList.add(`activity-level-${level}`);
+                    } else if (count >= totalTasks && totalTasks !== 0 && count !== 0) {
+                        square.classList.add("activity-level-5");
+                    }
+                    
+                    let tooltipDate = Utils.formatReadableDate(new Date(dateIso));
+                    if (i === 0) tooltipDate = "Today";
+                    
+                    square.title = `${tooltipDate}: ${count} / ${totalTasks} tasks completed`;
+                    fragment.appendChild(square);
+                }
+                DOM.activityGraph.appendChild(fragment);
+                
+                // Weekly Stats Logic: Only show on Monday
+                if (DOM.statsCard) {
+                    const todayNum = new Date().getDay(); // 0 = Sunday, 1 = Monday
+                    if (todayNum === 1) {
+                        DOM.statsCard.style.display = 'block';
+                        DOM.statTasks.innerText = weeklyTasksSum;
+                        DOM.statPerfect.innerText = weeklyPerfectDays;
+                        let consistency = Math.round((weeklyActiveDays / 7) * 100);
+                        DOM.statConsistency.innerText = `${consistency}%`;
+                    } else {
+                        DOM.statsCard.style.display = 'none';
+                    }
+                }
+            }
+        };
+
+        // Initialization
+        function init() {
+            Storage.initVersion();
+            cacheDOM();
+            bindEvents();
+            
+            updateDateTime();
+            // Sync exactly to top of minute
+            const now = new Date();
+            const msToNextMin = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+            setTimeout(() => {
+                updateDateTime();
+                setInterval(updateDateTime, 60000);
+            }, msToNextMin); // Clean start
+
+            Renderer.refresh();
+            if (State.problems > 0) DOM.undoProblemBtn.style.display = "block";
+            
+            safeCleanupLocalStorage();
+        }
+
+        function cacheDOM() {
+            DOM.greeting = document.getElementById("greeting");
+            DOM.datetime = document.getElementById("datetime");
+            DOM.motto = document.getElementById("motto");
+            
+            DOM.streak = document.getElementById("streak");
+            DOM.streakHistory = document.getElementById("streakHistory");
+            DOM.completeBtn = document.getElementById("completeBtn");
+            DOM.undoStreakBtn = document.getElementById("undoStreakBtn");
+            
+            DOM.neetBig = document.getElementById("neetBig");
+            DOM.neetCount = document.getElementById("neetCount");
+            DOM.progressBar = document.getElementById("progressBar");
+            DOM.btnAddProblem = document.getElementById("btnAddProblem");
+            DOM.undoProblemBtn = document.getElementById("undoProblemBtn");
+            
+            DOM.checklist = document.getElementById("checklist");
+            DOM.activityGraph = document.getElementById("activityGraph");
+            
+            DOM.statsCard = document.getElementById("statsCard");
+            DOM.statTasks = document.getElementById("statTasks");
+            DOM.statPerfect = document.getElementById("statPerfect");
+            DOM.statConsistency = document.getElementById("statConsistency");
+            
+            DOM.settingsModal = document.getElementById("settingsModal");
+            DOM.settingsTaskList = document.getElementById("settingsTaskList");
+            DOM.newTaskInput = document.getElementById("newTaskInput");
+            
+            DOM.orb1 = document.getElementById("orb1");
+            DOM.orb2 = document.getElementById("orb2");
+            DOM.momentumIcon = document.getElementById("momentumIcon");
+            DOM.neetcodeIcon = document.getElementById("neetcodeIcon");
+        }
+
+        function bindEvents() {
+            document.getElementById("btnSettings").addEventListener("click", openSettings);
+            document.getElementById("btnResetHistory").addEventListener("click", resetHistory);
+            
+            DOM.completeBtn.addEventListener("click", completeDay);
+            DOM.undoStreakBtn.addEventListener("click", undoStreak);
+            
+            DOM.btnAddProblem.addEventListener("click", addProblem);
+            DOM.undoProblemBtn.addEventListener("click", undoProblem);
+            
+            document.getElementById("btnAddTask").addEventListener("click", addTask);
+            document.getElementById("btnCloseSettings").addEventListener("click", closeSettings);
+            
+            DOM.newTaskInput.addEventListener("keypress", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    addTask();
+                }
+            });
+
+            DOM.momentumIcon.addEventListener("click", () => triggerOrbExplosion(DOM.momentumIcon));
+            DOM.neetcodeIcon.addEventListener("click", (e) => triggerCodeConfetti(e, DOM.neetcodeIcon));
+            
+            // Settings task deletion delegation
+            DOM.settingsTaskList.addEventListener("click", (e) => {
+                const btn = e.target.closest('.delete-task-btn');
+                if (btn) removeTask(parseInt(btn.dataset.index));
+            });
+        }
+
+        // Clock & Greeting logic
+        function updateDateTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            let name = "Swayam"; 
+            
+            // Varied Greetings based on time
+            let greetings = [];
+            const minutes = now.getMinutes();
+
+            // Easter Egg: Exact time triggers (e.g. 3:33, 4:04, 11:11)
+            if (hours === 3 && minutes === 33) {
+                greetings = [`The witching hour, ${name}. Keep coding.`];
+            } else if (hours === 4 && minutes === 4) {
+                greetings = [`Error 404: Sleep not found, ${name}.`];
+            } else if (hours === 11 && minutes === 11) {
+                greetings = [`Make a wish, ${name}. Then make it happen.`];
+            } else if (hours < 5) {
+                greetings = [`Up late, ${name}?`, `Still grinding, ${name}?`, `Night owl mode, ${name}.`];
+            } else if (hours < 12) {
+                greetings = [`Morning, ${name}.`, `Let's get it, ${name}.`, `Rise and grind, ${name}.`];
+            } else if (hours < 17) {
+                greetings = [`Good afternoon, ${name}.`, `Keep pushing, ${name}.`, `Midday sprint, ${name}.`];
+            } else {
+                greetings = [`Evening, ${name}.`, `Wrapping up soon, ${name}?`, `Sunset hustle, ${name}.`];
+            }
+            
+            // Pseudo-random selection based on date so it doesn't jump every minute
+            let greetingIndex = (now.getDate() + hours) % greetings.length;
+            DOM.greeting.innerText = greetings[greetingIndex];
+            
+            // Dynamic Motto based on streak
+            let motto = "";
+            let completedTasksCount = Utils.completedTasks(State.checklist);
+            
+            if (completedTasksCount === State.tasks.length && State.tasks.length > 0) {
+                motto = "Incredible work today. Rest easy.";
+            } else if (State.streak >= 100) {
+                motto = `Centurion. ${State.streak} days of sheer discipline.`;
+            } else if (State.streak >= 30) {
+                motto = `Habit forged. ${State.streak} days in a row.`;
+            } else if (State.streak >= 10) {
+                motto = `Unstoppable. ${State.streak} days in a row.`;
+            } else if (State.streak >= 3) {
+                motto = "Momentum is building. Don't break the chain.";
+            } else if (State.problems >= 150) {
+                motto = "NeetCode 150 Conquered.";
+            } else if (State.problems > 50) {
+                motto = "Algorithm master in the making.";
+            } else {
+                let mottos = [
+                    "Focus up. Remove distractions.", "One day at a time.", 
+                    "Implementation > Watching.", "Small daily compounding."
+                ];
+                motto = mottos[now.getDate() % mottos.length];
+            }
+            DOM.motto.innerText = motto;
+            DOM.datetime.innerText = Utils.formatReadableDate(now);
+        }
+
+        // Streak Logic
+        function completeDay() {
+            let todayIso = Utils.today();
+            if(todayIso === State.lastDate) {
+                // Shake animation for already done
+                DOM.completeBtn.style.animation = "none";
+                setTimeout(() => {
+                    DOM.completeBtn.style.transition = "transform 0.1s";
+                    DOM.completeBtn.style.transform = "translateX(5px)";
+                    setTimeout(() => DOM.completeBtn.style.transform = "translateX(-5px)", 100);
+                    setTimeout(() => DOM.completeBtn.style.transform = "translateX(5px)", 200);
+                    setTimeout(() => {
+                        DOM.completeBtn.style.transform = "translateX(0)";
+                        setTimeout(() => DOM.completeBtn.style.transition = "all 0.3s cubic-bezier(0.25, 1, 0.5, 1)", 100);
+                    }, 300);
+                }, 10);
+                return;
+            }
+
+            let yesterdayIso = Utils.getDateOffset(1);
+
+            State.prevStreak = State.streak;
+            State.prevDate = State.lastDate;
+            Storage.set("prevStreak", State.prevStreak);
+            Storage.set("prevDate", State.prevDate);
+
+            if (State.lastDate === yesterdayIso) {
+                State.streak++;
+            } else {
+                State.streak = 1;
+            }
+
+            State.lastDate = todayIso;
+            Storage.set("streak", State.streak);
+            Storage.set("lastDate", State.lastDate);
+            
+            // Centralized Renderer triggers streak UI update natively
+            Renderer.streak();
+            
+            // UX Milestone Celebrations for Streak
+            if ([7, 30, 50, 100, 365].includes(State.streak)) {
+                setTimeout(() => {
+                    const centerEvent = { clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 };
+                    triggerCodeConfetti(centerEvent, DOM.momentumIcon, true);
+                }, 400);
+                
+                DOM.motto.innerText = `🎉 MILESTONE UNLOCKED: ${State.streak} DAYS! 🎉`;
+                DOM.motto.style.color = "#fbbf24";
+                setTimeout(() => DOM.motto.style.color = "rgba(255, 255, 255, 0.4)", 4000);
+            }
+            
+            // Animate Number specifically for click
+            DOM.streak.style.transform = "scale(1.3)";
+            DOM.streak.style.color = "#fff";
+            setTimeout(() => DOM.streak.style.transform = "scale(1)", 300);
+        }
+
+        function undoStreak() {
+            if (State.prevStreak !== null && State.prevDate !== null) {
+                State.streak = parseInt(State.prevStreak);
+                State.lastDate = State.prevDate;
+                
+                Storage.set("streak", State.streak);
+                Storage.set("lastDate", State.lastDate);
+                
+                Storage.remove("prevStreak");
+                Storage.remove("prevDate");
+                State.prevStreak = null;
+                State.prevDate = null;
+                
+                Renderer.streak();
+            }
+        }
+
+        // NeetCode Logic
+        function addProblem() {
+            if (State.problems < 150) {
+                State.problems++;
+                Storage.set("problems", State.problems);
+                Renderer.progress();
+                
+                DOM.undoProblemBtn.style.display = "block";
+                DOM.neetBig.style.transform = "scale(1.2)";
+                setTimeout(() => DOM.neetBig.style.transform = "scale(1)", 200);
+                
+                // UX Milestone Celebrations for Problems
+                if ([25, 50, 100, 150].includes(State.problems)) {
+                    setTimeout(() => {
+                        triggerCodeConfetti({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 }, DOM.neetcodeIcon, true);
+                    }, 400);
+                    
+                    const originalMotto = DOM.motto.innerText;
+                    DOM.motto.innerText = `🔥 ALGO MILESTONE: ${State.problems} PROBLEMS! 🔥`;
+                    DOM.motto.style.color = "#fbbf24";
+                    setTimeout(() => { 
+                        DOM.motto.innerText = originalMotto;
+                        DOM.motto.style.color = "rgba(255, 255, 255, 0.4)";
+                    }, 4000);
+                }
+            }
+        }
+
+        function undoProblem() {
+            if (State.problems > 0) {
+                State.problems--;
+                Storage.set("problems", State.problems);
+                Renderer.progress();
+                
+                if (State.problems === 0) DOM.undoProblemBtn.style.display = "none";
+                
+                DOM.neetBig.style.transform = "scale(0.8)";
+                setTimeout(() => DOM.neetBig.style.transform = "scale(1)", 200);
+            }
+        }
+
+        // Checklist Logic
+        function toggleTask(id, element) {
+            let todayIso = Utils.today();
+            State.checklist[id] = !State.checklist[id];
+            Storage.set(`checklist_${todayIso}`, State.checklist);
+            
+            let completedCount = Utils.completedTasks(State.checklist);
+            State.activity[todayIso] = completedCount;
+            Storage.set('dailyActivity', State.activity);
+            
+            Renderer.activity(); // Fast batch repaint updates the graph and weekly stats
+            
+            // Safe manual toggle for UX snappiness without reloading list
+            if (State.checklist[id]) {
+                element.classList.add('done');
+                element.setAttribute("aria-checked", "true");
+            } else {
+                element.classList.remove('done');
+                element.setAttribute("aria-checked", "false");
+            }
+            
+            updateDateTime(); // Updates motto dynamically
+            
+            // Easter Egg Confetti: The Perfect Day!
+            if (completedCount === State.tasks.length && State.tasks.length > 0) {
+                // Fire pseudo-mouse event from center of screen
+                const centerEvent = {
+                    clientX: window.innerWidth / 2,
+                    clientY: window.innerHeight / 2
+                };
+                triggerCodeConfetti(centerEvent, DOM.momentumIcon, true);
+                
+                // Extra UX pulse
+                DOM.motto.style.color = "#4ade80";
+                setTimeout(() => DOM.motto.style.color = "rgba(255, 255, 255, 0.4)", 3000);
+            }
+        }
+
+        // Memory Cleanup (Pro Technique avoiding live iterations)
+        function safeCleanupLocalStorage() {
+            const todayKey = `checklist_${Utils.today()}`;
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith('checklist_') && key !== todayKey) {
+                    localStorage.removeItem(key);
+                }
+            });
+        }
+
+        function resetHistory() {
+            if(confirm("Are you sure you want to completely reset your progress, streak, and task history? This cannot be undone.")) {
+                Storage.clear();
+                location.reload();
+            }
+        }
+
+        // --- Settings / Task Management ---
+        function openSettings() {
+            renderSettingsTasks();
+            DOM.settingsModal.style.display = 'flex';
+        }
+
+        function closeSettings() {
+            DOM.settingsModal.style.display = 'none';
+        }
+
+        let draggedItemIndex = null;
+
+        function renderSettingsTasks() {
+            DOM.settingsTaskList.innerHTML = '';
+            const fragment = document.createDocumentFragment();
+            
+            State.tasks.forEach((task, index) => {
+                const item = document.createElement('div');
+                item.className = 'settings-task-item';
+                item.draggable = true;
+                item.dataset.index = index;
+                
+                item.innerHTML = `
+                    <div style="color: rgba(255,255,255,0.2); margin-right: 15px; cursor: grab;" aria-label="Drag Handle">
+                        <svg width="15" height="15"><use href="#icon-drag"></use></svg>
+                    </div>
+                    <span style="flex-grow: 1;">${task.text}</span>
+                    <button class="icon-btn delete-task-btn" data-index="${index}" title="Delete" aria-label="Delete Task" style="color: #ff4d4d; font-weight: bold;">✕</button>
+                `;
+
+                // Drag and Drop Event Listeners
+                item.addEventListener('dragstart', function(e) {
+                    draggedItemIndex = index;
+                    setTimeout(() => item.classList.add('dragging'), 0);
+                });
+
+                item.addEventListener('dragend', function(e) {
+                    item.classList.remove('dragging');
+                    draggedItemIndex = null;
+                    renderSettingsTasks(); // Re-render to clear any hover styles
+                });
+
+                item.addEventListener('dragover', function(e) {
+                    e.preventDefault(); // Necessary to allow dropping
+                });
+
+                item.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    if(draggedItemIndex === null || draggedItemIndex === index) return;
+                    
+                    // Logic to reorder array
+                    const itemToMove = State.tasks.splice(draggedItemIndex, 1)[0];
+                    State.tasks.splice(index, 0, itemToMove);
+                    
+                    saveTasks();
+                    renderSettingsTasks();
+                    Renderer.checklist();
+                });
+
+                fragment.appendChild(item);
+            });
+            
+            DOM.settingsTaskList.appendChild(fragment);
+        }
+
+        function addTask() {
+            const text = DOM.newTaskInput.value.trim();
+            if (text) {
+                const newId = 'task_' + Date.now();
+                State.tasks.push({ id: newId, text: text });
+                saveTasks();
+                DOM.newTaskInput.value = '';
+                renderSettingsTasks();
+                Renderer.checklist();
+                Renderer.activity();
+            }
+        }
+
+        function removeTask(index) {
+            let todayIso = Utils.today();
+            const task = State.tasks[index];
+            if(confirm(`Are you sure you want to delete "${task.text}" from your checklist?`)) {
+                State.tasks.splice(index, 1);
+                
+                // Clean it up from today's state if present
+                if (State.checklist.hasOwnProperty(task.id)) {
+                    delete State.checklist[task.id];
+                    Storage.set(`checklist_${todayIso}`, State.checklist);
+                    
+                    State.activity[todayIso] = Utils.completedTasks(State.checklist);
+                    Storage.set('dailyActivity', State.activity);
+                }
+                
+                saveTasks();
+                renderSettingsTasks();
+                Renderer.checklist();
+                Renderer.activity();
+            }
+        }
+
+        function saveTasks() {
+            Storage.set('tasks', State.tasks);
+        }
+
+        // --- Easter Eggs ---
+        let neetClickCount = 0;
+        let neetClickTimer = null;
+        const codeSymbols = ['{ }', '< />', '=>', '||', '&&', '++', '()', 'O(N)', 'Hash', '[]'];
+
+        function triggerCodeConfetti(e, element, force = false) {
+            if(!force) neetClickCount++;
+            
+            // Pop the icon itself
+            if(element) {
+                element.style.transform = `scale(${1 + (neetClickCount * 0.1)}) rotate(${neetClickCount * 10}deg)`;
+                setTimeout(() => { element.style.transform = 'scale(1) rotate(0)'; }, 200);
+            }
+
+            // If clicked 5 times rapidly, explode confetti!
+            if (neetClickCount >= 5 || force) {
+                // High-quality physics-based confetti
+                var duration = 3 * 1000;
+                var animationEnd = Date.now() + duration;
+                var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+                function randomInRange(min, max) {
+                    return Math.random() * (max - min) + min;
+                }
+
+                var interval = setInterval(function() {
+                    var timeLeft = animationEnd - Date.now();
+
+                    if (timeLeft <= 0) {
+                        return clearInterval(interval);
+                    }
+
+                    var particleCount = 50 * (timeLeft / duration);
+                    // since particles fall down, start a bit higher than random
+                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+                }, 250);
+                
+                // Change motto temporarily
+                const originalMotto = DOM.motto.innerText;
+                DOM.motto.innerText = "You've unlocked the Code Storm! 🌩️";
+                DOM.motto.style.color = "#38bdf8";
+                setTimeout(() => { 
+                    DOM.motto.innerText = originalMotto; 
+                    DOM.motto.style.color = "rgba(255, 255, 255, 0.4)";
+                }, 3000);
+                
+                neetClickCount = 0; // reset
+            }
+            
+            // Auto reset click count using a distinct timer
+            clearTimeout(neetClickTimer);
+            neetClickTimer = setTimeout(() => { neetClickCount = 0; }, 1000);
+        }
+
+        let momentumClickCount = 0;
+        let momentumClickTimer = null;
+        function triggerOrbExplosion(element) {
+            momentumClickCount++;
+            element.style.transform = `scale(0.8)`;
+            setTimeout(() => { element.style.transform = 'scale(1)'; }, 100);
+
+            if (momentumClickCount >= 3) {
+                // Add explosion class directly over existing classes! 
+                // Do not remove 'orb-1' or 'orb-2' since they control the size.
+                DOM.orb1.classList.add('explode');
+                DOM.orb2.classList.add('explode');
+                
+                setTimeout(() => {
+                    DOM.orb1.classList.remove('explode');
+                    DOM.orb2.classList.remove('explode');
+                }, 1000);
+
+                momentumClickCount = 0;
+            }
+
+            clearTimeout(momentumClickTimer);
+            momentumClickTimer = setTimeout(() => { momentumClickCount = 0; }, 1000);
+        }
+
+        // Run Init
+        init();
+    </script>
+</body>
+</html>
