@@ -33,8 +33,10 @@ export default function RootLayout({
         }} />
       </head>
       <body className={inter.className}>
-        <div className="orb orb-1" id="orb1"></div>
-        <div className="orb orb-2" id="orb2"></div>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
+          <div className="orb orb-1" id="orb1"></div>
+          <div className="orb orb-2" id="orb2"></div>
+        </div>
         {children}
       </body>
     </html>
