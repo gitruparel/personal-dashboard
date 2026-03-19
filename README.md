@@ -7,10 +7,8 @@ A **consistency-first productivity system** designed for developers.
 ## 📸 Preview
 
 ![Desktop Dashboard Preview](./public/desktop-preview.png)
-_Add a clean screenshot of the dashboard on desktop here_
 
-![Mobile Dashboard Preview](./public/mobile-preview.png)
-_Add a tall screenshot or GIF of the mobile app here_
+![Mobile Dashboard Preview](./public/mobile-preview.gif)
 
 ---
 
