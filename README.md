@@ -1,71 +1,144 @@
-# Developer's Personal Dashboard 🚀
+# Developer’s Personal Dashboard 🚀
 
-I built this personal dashboard to fix one specific problem: **inconsistency in learning.** 
-
-This isn’t just another to-do list tracker. It’s an engineered system designed strictly to force consistency for computer engineers. 
-
-I needed a system that natively:
-- **Tracks my daily streak** and visually reinforces momentum
-- **Enforces the "2 lectures → build project" mindset**
-- **Tracks Data Structures & Algorithms milestones** (like the NeetCode 150)
-- **Shows activity density** via a 90-day GitHub-style Heatmap
-- **Gives tactile, instant milestone feedback** (inspired by Duolingo)
-
-Built originally using raw HTML, CSS, and JS, this repository represents the **full production-ready migration** utilizing Next.js and Supabase for absolute reliability.
+A **consistency-first productivity system** designed for developers.
 
 ---
 
-## 💻 Built Specifically for Engineers
-This workspace strips away the unnecessary clutter of traditional productivity apps to focus purely on what a developer actually needs:
-- **DSA Milestone Tracking**: Natively features a customizable target progress tracker specifically designed for grinding algorithms. 
-- **AMOLED Battery Optimization**: The UI is built on a pure `#050505` true-black foundation. Because black pixels physically turn off on OLED smartphone screens, you can safely leave this Progressive Web App (PWA) open continuously on your phone without draining your battery. Keep your tasks locked in right in front of you all day.
-- **Developer-Centric Heatmap**: A pristine 90-day GitHub-style Activity Graph seamlessly visualizes your daily productivity intensity over the last 3 months, leveraging that familiar "commit history" psychological drive.
+## 📸 Preview
 
-## 🛡️ Enterprise-Grade Security
-Though constructed as a personal workspace, the core engine was architected against strict modern security compliance standards:
-- **Zero-Trust Database Control**: Powered entirely by Supabase **Row Level Security (RLS)**. By mathematically binding strict `auth.uid() = user_id` validation constraints to every table, Insecure Direct Object Reference (IDOR) attacks are fundamentally impossible.
-- **XSS Immunity**: Built natively on React's automatic DOM sanitization pipeline, rendering Cross-Site Scripting (XSS) via customized task strings physically impossible.
-- **Zero High-Risk Dependencies**: The application architecture explicitly avoids bloat, running strictly on 5 highly funded, rigorously audited, open-source libraries (`next`, `react`, `@supabase/supabase-js`, `lucide-react`, `canvas-confetti`), resulting in **0 vulnerabilities** upon NPM audit.
+![Desktop Dashboard Preview](./public/desktop-preview.png)
+_Add a clean screenshot of the dashboard on desktop here_
 
-## ✨ Technical Excellence
+![Mobile Dashboard Preview](./public/mobile-preview.png)
+_Add a tall screenshot or GIF of the mobile app here_
 
-- **Deep Mobile PWA Integration**: Authentic native touch-feel on iOS. Includes custom hardware-accelerated spring animations (`cubic-bezier` physics), removed ghost-hovers for true tactile pressing, and a flawless locked viewport with frictionless touch scrolling.
-- **Luxury UI Aesthetics**: 
-  - **Glass Sheen Lighting**: Multi-layered `linear-gradient` backgrounds simulate ambient light catching the beveled edges of frosted glass.
-  - **Spring Physics**: Bouncy, organic, physical reactions mapping to all touch interactions.
-  - **Organic Depth Textures**: A 4% fractional SVG noise layer injected across the entire viewport to permanently kill the "flat digital HTML" look.
-- **Data Portability**: Full JSON state export and import architecture guarantees uncompromised ownership over your local data.
+---
+
+## 🧠 Problem
+
+Most productivity tools fail for engineers because they:
+- focus on tasks instead of **momentum**
+- track work but don’t enforce **execution**
+- don’t align with how developers actually learn
+
+I built this to solve one problem:
+
+> **inconsistency in learning and building**
+
+---
+
+## ⚡ Solution
+
+This dashboard is not a to-do list.
+
+It is a **system designed to enforce consistency** through:
+
+- 🔥 Daily streak tracking (momentum-first design)
+- 📊 90-day GitHub-style activity heatmap
+- 🧠 DSA milestone tracking (NeetCode 150)
+- ⚙️ Customizable developer-focused tasks
+- 🎯 “2 lectures → build project” mindset reinforcement
+- 🎉 Instant feedback loops (milestones, streaks, perfect days)
+
+Inspired by:
+- **Duolingo** (streak psychology)
+- **GitHub** (activity visualization)
+
+---
+
+## ✨ Features
+
+### 🔥 Momentum System
+- Daily streak tracking with undo support
+- Visual reinforcement via streak history
+- Milestone celebrations (7, 30, 100 days)
+
+### 📊 Activity Tracking
+- 90-day heatmap
+- Weekly consistency stats
+- Perfect day detection
+
+### 💻 Developer-Focused Workflow
+- NeetCode 150 progress tracker
+- Custom task system (AI, DSA, Gym, Projects, etc.)
+- Keyboard-accessible interactions
+
+### ⚙️ Customization
+- Add / remove / reorder tasks
+- Persistent user state
+- JSON export/import support
+
+---
 
 ## 🛠 Tech Stack
 
-- **Framework**: Next.js 15 (React App Router)
-- **Styling**: Vanilla Object-Oriented CSS (Zero utility-class bloat, 100% custom variables and physics)
-- **Database & Auth**: Supabase PostgreSQL (Strictly Locked Row Level Security)
-- **Iconography**: Lucide React + Generative AI PWA Asset Injection
+- **Frontend**: Next.js (React, App Router)
+- **Database & Auth**: Supabase (PostgreSQL + RLS)
+- **Styling**: Custom CSS (no UI frameworks)
+- **Icons**: Lucide React
+- **Animations**: CSS + canvas-confetti
 
-## 🚀 Roadmap & Future Improvements
-Still aggressively improving the ecosystem:
-- [x] Initial migration to Next.js + Supabase
-- [x] True cloud sync via PostgreSQL
-- [ ] Multi-user support with public profiles
-- [ ] Granular "lecture → project" correlation tracking
+---
 
-## ⚙️ Getting Started
+## 🔐 Security Approach
 
-1. Clone the repository locally.
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Set up your `.env.local` variables with your specific Supabase credentials:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-key
-   ```
-4. Setup the database backbone structure by executing the provided `supabase_setup.sql` internally within your Supabase SQL editor.
-5. Boot the matrix:
-   ```bash
-   npm run dev
-   ```
+- Row Level Security (RLS) ensures user-level data isolation
+- React prevents direct DOM injection (basic XSS protection)
+- Minimal dependency footprint
 
-*Would absolutely love feedback or pull requests.*
+---
+
+## 📱 Progressive Web App
+
+- Installable on mobile
+- Optimized for AMOLED displays (`#050505`)
+- Designed for always-on visibility
+
+---
+
+## 🚀 Getting Started
+
+```bash
+git clone https://github.com/gitruparel/personal-dashboard
+cd personal-dashboard
+npm install
+```
+
+Create `.env.local`:
+```env
+NEXT_PUBLIC_SUPABASE_URL=your-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-key
+```
+
+Run:
+```bash
+npm run dev
+```
+
+---
+
+## 📈 Roadmap
+
+- [x] Migration to Next.js + Supabase
+- [x] Cloud sync
+- [ ] Lecture → project tracking system
+- [ ] Multi-user support / profiles
+
+---
+
+## 🧠 Philosophy
+
+This project is built on one idea:
+
+> **Consistency beats intensity.**
+
+The goal is not to track work.
+The goal is to force execution and build momentum daily.
+
+---
+
+## 🤝 Contributing
+
+Open to feedback, ideas, and improvements.
+
+⭐ **If you found this useful, consider starring the repo.**
