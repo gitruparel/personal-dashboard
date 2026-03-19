@@ -8,7 +8,9 @@ A **consistency-first productivity system** designed for developers.
 
 ![Desktop Dashboard Preview](./public/desktop-preview.png)
 
-![Mobile Dashboard Preview](./public/mobile-preview.gif)
+<p align="center">
+  <img src="./public/mobile-preview.gif" alt="Mobile Dashboard Preview" width="320" />
+</p>
 
 ---
 
