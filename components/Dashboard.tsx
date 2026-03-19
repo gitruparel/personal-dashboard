@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useMemo, useCallback, memo } from 'react';
 import { supabase } from '@/lib/supabase';
-import { RefreshCw, Shield, Settings } from 'lucide-react';
+import { LogOut, Shield, Settings } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import ProgressTrackerCard from './ProgressTrackerCard';
 import StreakCard from './StreakCard';
@@ -34,6 +34,7 @@ export default function Dashboard({ session }: { session: any }) {
     const [activity, setActivity] = useState<DailyActivity[]>([]);
     const [showSettings, setShowSettings] = useState(false);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
+    const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
     
     useEffect(() => {
         if (!user) return;
@@ -318,6 +319,18 @@ export default function Dashboard({ session }: { session: any }) {
 
     return (
         <>
+            {showSignOutConfirm && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <div className="card" style={{ width: '90%', maxWidth: '400px', textAlign: 'center', padding: '40px 30px' }}>
+                        <h2 style={{ justifyContent: 'center', marginBottom: '15px' }}>Sign Out?</h2>
+                        <p style={{ color: 'var(--text-muted)', marginBottom: '30px', fontSize: '1.05rem', lineHeight: 1.5 }}>Are you sure you want to securely disconnect your workspace?</p>
+                        <div style={{ display: 'flex', gap: '15px' }}>
+                            <button onClick={() => setShowSignOutConfirm(false)} className="action-btn" style={{ marginTop: 0, background: 'rgba(255,255,255,0.05)', color: 'white', borderColor: 'transparent' }}>Cancel</button>
+                            <button onClick={handleSignOut} className="action-btn" style={{ marginTop: 0, background: 'white', color: 'black' }}>Sign Out</button>
+                        </div>
+                    </div>
+                </div>
+            )}
             {showSettings && (
                 <SettingsOverlay 
                     profile={profile}
@@ -340,8 +353,8 @@ export default function Dashboard({ session }: { session: any }) {
                         <button className="reset-btn" aria-label="Settings" title="Settings" onClick={() => setShowSettings(true)}>
                             <Settings width="20" height="20" />
                         </button>
-                        <button className="reset-btn" aria-label="Sign Out" title="Sign Out" onClick={handleSignOut}>
-                            <RefreshCw width="20" height="20" />
+                        <button className="reset-btn" aria-label="Sign Out" title="Sign Out" onClick={() => setShowSignOutConfirm(true)}>
+                            <LogOut width="20" height="20" />
                         </button>
                     </div>
                 </header>
