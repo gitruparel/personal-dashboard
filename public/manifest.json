@@ -1,19 +1,23 @@
 {
-  "name": "Personal Workspace",
+  "name": "Workspace Dashboard",
   "short_name": "Workspace",
+  "description": "A high-performance personal productivity and milestone tracker",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
   "icons": [
     {
       "src": "/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "maskable any"
     },
     {
       "src": "/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "maskable any"
     }
-  ],
-  "theme_color": "#050505",
-  "background_color": "#050505",
-  "display": "standalone"
+  ]
 }
