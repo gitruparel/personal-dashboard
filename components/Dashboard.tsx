@@ -33,6 +33,7 @@ export default function Dashboard({ session }: { session: any }) {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [activity, setActivity] = useState<DailyActivity[]>([]);
     const [showSettings, setShowSettings] = useState(false);
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
     
     useEffect(() => {
         if (!user) return;
@@ -52,6 +53,8 @@ export default function Dashboard({ session }: { session: any }) {
             }
             if (tasksRes.data) setTasks(tasksRes.data);
             if (activityRes.data) setActivity(activityRes.data);
+            
+            setIsDataLoaded(true);
         };
         
         loadAllData();
@@ -302,7 +305,16 @@ export default function Dashboard({ session }: { session: any }) {
         return activity.some((a: DailyActivity) => a.date === dStr && a.activity_level > 0);
     }), [activity]);
 
-    const displayName = useMemo(() => profile.greeting_name || user.user_metadata?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'User', [profile.greeting_name, user]);
+    const displayName = useMemo(() => profile.greeting_name || user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'User', [profile.greeting_name, user]);
+
+    if (!isDataLoaded) {
+        return (
+            <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', zIndex: 10 }}>
+                <div style={{ width: '40px', height: '40px', border: '3px solid rgba(255,255,255,0.05)', borderTopColor: 'var(--accent)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem', letterSpacing: '4px', textTransform: 'uppercase', fontWeight: 500 }}>Decrypting Workspace...</div>
+            </div>
+        );
+    }
 
     return (
         <>
