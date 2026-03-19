@@ -6,10 +6,10 @@ A **consistency-first productivity system** designed for developers.
 
 ## 📸 Preview
 
-![Desktop Dashboard Preview](./public/desktop-preview.png)
-
 <p align="center">
-  <img src="./public/mobile-preview.gif" alt="Mobile Dashboard Preview" width="320" />
+  <img src="./public/desktop-preview.png" alt="Desktop Dashboard Preview" width="65%" />
+  &nbsp; &nbsp;
+  <img src="./public/mobile-preview.gif" alt="Mobile Dashboard Preview" width="25%" />
 </p>
 
 ---
