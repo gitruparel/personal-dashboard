@@ -1,16 +1,20 @@
-# Personal Workspace Dashboard 🚀
+# Developer's Personal Dashboard 🚀
 
-A high-performance, ultra-premium personal productivity workspace. Designed to track daily habits, manage task milestones, and intensely visualize consistency over time. Built natively with Next.js, and strictly synchronized via Supabase PostgreSQL.
+A high-performance, ultra-premium personal productivity workspace engineered explicitly for software developers. Designed to track recurring engineering habits, manage DSA grinding milestones, and intensely visualize long-term consistency. Built natively with Next.js, and strictly synchronized via Supabase PostgreSQL.
 
-## ✨ Features
+## 💻 Built for Engineers
+This workspace strips away the unnecessary clutter of traditional to-do apps to focus purely on what a computer engineer actually needs:
+- **DSA Milestone Tracking**: Natively features a customizable target progress tracker specifically designed for grinding algorithms (such as tracking the NeetCode 150). 
+- **AMOLED Battery Optimization**: The UI is built on a pure `#050505` black foundation. Because black pixels are completely physically turned off on OLED/AMOLED smartphone screens, you can safely leave this Progressive Web App (PWA) open continuously on your phone without drastically draining your battery. Keep your tasks locked in right in front of you all day.
+- **Developer-Centric Heatmap**: A pristine 90-day GitHub-style Activity Graph seamlessly visualizes your daily productivity intensity over the last 3 months, leveraging that familiar "commit history" psychological drive.
 
-- **Dynamic Progress Tracking**: Customizable milestone trackers (e.g. NeetCode 150) featuring real-time percentage syncing and celebratory confetti triggers.
+## ✨ Technical Features
+
 - **Deep Mobile PWA Integration**: Authentic native touch-feel on iOS. Includes custom hardware-accelerated spring animations (`cubic-bezier` physics), removed ghost-hovers for true tactile pressing, and a flawless locked viewport with a frictionless scrolling heat-map.
 - **Luxury UI Aesthetics**: 
   - **Glass Sheen Lighting**: Multi-layered `linear-gradient` backgrounds simulating ambient light catching the beveled edges of frosted glass.
   - **Spring Physics**: Bouncy, organic, physical reactions mapping to all drag-and-drop and touch interactions.
-  - **Organic Depth Textures**: A 4% fractional SVG noise layer injected across the entire viewport to permanently kill the "flat digital canvas" look.
-- **90-Day GitHub-Style Heatmap**: Real-time activity graph conditionally tracking and visualizing daily productivity intensity over the last 3 months.
+  - **Organic Depth Textures**: A 4% fractional SVG noise layer injected across the entire viewport to permanently kill the "flat digital HTML" look.
 - **Data Portability**: Full JSON state export and import architecture guarantees uncompromised ownership over your local data.
 
 ## 🛠 Tech Stack
@@ -40,4 +44,4 @@ A high-performance, ultra-premium personal productivity workspace. Designed to t
 
 ## 🎮 Easter Eggs
 
-Hidden interactions are baked deep into the DOM structure... (Hint: The legendary Konami Code lives on).
+Hidden interactions are baked deep into the DOM structure... (Hint: The legendary classic arcade cheat code lives on).
