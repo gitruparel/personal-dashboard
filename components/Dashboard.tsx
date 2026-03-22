@@ -422,7 +422,7 @@ export default function Dashboard({ session }: { session: any }) {
                 <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                     <div>
                         <div className="greeting" id="greeting" style={{ textTransform: 'capitalize' }}>
-                            {getDynamicGreeting(displayName)}
+                            {getDynamicGreeting(displayName, profile.streak, profile.neetcode_progress, profile.tracker_target)}
                         </div>
                         <div className="date-time" id="datetime">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
                     </div>
