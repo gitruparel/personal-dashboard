@@ -2,7 +2,7 @@
 
 import { Zap } from 'lucide-react';
 
-export default function StreakCard({ streak, isCompletedToday, onMarkComplete, onUndo, historyDots }: { streak: number, isCompletedToday: boolean, onMarkComplete: () => void, onUndo: () => void, historyDots: boolean[] }) {
+export default function StreakCard({ streak, historyDots }: { streak: number, historyDots: boolean[] }) {
     return (
         <div className="card streak-card delay-1" style={{opacity: 1, animation: 'none'}}>
             <h2>
@@ -18,10 +18,6 @@ export default function StreakCard({ streak, isCompletedToday, onMarkComplete, o
                     ))}
                 </div>
             </div>
-            <button className={`action-btn ${isCompletedToday ? 'completed' : ''}`} onClick={onMarkComplete}>
-                {isCompletedToday ? 'Day Completed!' : 'Mark Day Complete'}
-            </button>
-            {isCompletedToday && <button className="undo-btn visible" onClick={onUndo}>Undo completion</button>}
         </div>
     );
 }

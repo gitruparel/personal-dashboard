@@ -449,9 +449,6 @@ export default function Dashboard({ session }: { session: any }) {
                 <div className="right-panel">
                     <MemoStreakCard 
                         streak={profile.streak} 
-                        isCompletedToday={isCompletedToday}
-                        onMarkComplete={handleMarkDayComplete}
-                        onUndo={handleUndoDayComplete}
                         historyDots={historyDots}
                     />
                     
