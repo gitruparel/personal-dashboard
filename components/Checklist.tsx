@@ -1,7 +1,7 @@
 'use client';
 
-import { CheckSquare, Edit2, Check, Plus, Trash2, GripVertical } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { CheckSquare, Edit2, Check, Plus, Trash2, GripVertical, ChevronUp, ChevronDown } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 
 export type Task = {
     id: string;
@@ -106,11 +106,39 @@ export default function Checklist({
                             cursor: isEditing ? 'grab' : 'pointer'
                         }}
                     >
-                        {isEditing ? (
-                            <GripVertical width={18} height={18} style={{ color: 'var(--text-muted)', marginRight: '10px', flexShrink: 0 }} />
-                        ) : (
-                            <div className="check-box"></div>
+                        {isEditing && (
+                            <div style={{ display: 'flex', flexDirection: 'column', marginRight: '10px' }}>
+                                <button 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        const idx = localTasks.findIndex(t => t.id === task.id);
+                                        if (idx > 0) {
+                                            const newTasks = [...localTasks];
+                                            [newTasks[idx], newTasks[idx-1]] = [newTasks[idx-1], newTasks[idx]];
+                                            setLocalTasks(newTasks.map((t, i) => ({ ...t, order_index: i })));
+                                        }
+                                    }}
+                                    style={{ background: 'none', border: 'none', color: 'var(--text-muted)', padding: '2px', cursor: 'pointer' }}
+                                >
+                                    <ChevronUp width={16} height={16} />
+                                </button>
+                                <button 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        const idx = localTasks.findIndex(t => t.id === task.id);
+                                        if (idx < localTasks.length - 1) {
+                                            const newTasks = [...localTasks];
+                                            [newTasks[idx], newTasks[idx+1]] = [newTasks[idx+1], newTasks[idx]];
+                                            setLocalTasks(newTasks.map((t, i) => ({ ...t, order_index: i })));
+                                        }
+                                    }}
+                                    style={{ background: 'none', border: 'none', color: 'var(--text-muted)', padding: '2px', cursor: 'pointer' }}
+                                >
+                                    <ChevronDown width={16} height={16} />
+                                </button>
+                            </div>
                         )}
+                        {!isEditing && <div className="check-box"></div>}
                         <span className="item-text" style={{ flexGrow: 1 }}>{task.text}</span>
                         {isEditing && (
                             <button 

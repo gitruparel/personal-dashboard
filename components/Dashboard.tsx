@@ -25,6 +25,7 @@ export default function Dashboard({ session }: { session: any }) {
         streak: 0,
         neetcode_progress: 0,
         last_completed_date: '',
+        last_reset_date: '',
         greeting_name: '',
         tracker_name: 'NeetCode 150',
         tracker_target: 150
@@ -36,53 +37,44 @@ export default function Dashboard({ session }: { session: any }) {
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
     
-    useEffect(() => {
-        if (!user) return;
-        
-        const loadAllData = async () => {
-            const [profileRes, tasksRes, activityRes] = await Promise.all([
-                supabase.from('profiles').select('*').eq('id', user.id).single(),
-                supabase.from('tasks').select('*').eq('user_id', user.id).order('order_index'),
-                supabase.from('daily_activity').select('*').eq('user_id', user.id)
-            ]);
+    const getTodayStr = useCallback(() => new Date().toLocaleDateString('en-CA'), []); // en-CA gives YYYY-MM-DD
+    const todayDateStr = getTodayStr();
 
-            if (profileRes.data) {
-                setProfile(profileRes.data);
-            } else {
-                const { data: newProfile } = await supabase.from('profiles').insert([{ id: user.id }]).select().single();
-                if (newProfile) setProfile(newProfile);
+    const loadAllData = useCallback(async () => {
+        if (!user) return;
+        const [profileRes, tasksRes, activityRes] = await Promise.all([
+            supabase.from('profiles').select('*').eq('id', user.id).single(),
+            supabase.from('tasks').select('*').eq('user_id', user.id).order('order_index'),
+            supabase.from('daily_activity').select('*').eq('user_id', user.id)
+        ]);
+
+        if (profileRes.data) {
+            setProfile(profileRes.data);
+            // Handle Daily Reset logic
+            if (profileRes.data.last_reset_date !== todayDateStr) {
+                await supabase.from('tasks').update({ completed: false }).eq('user_id', user.id);
+                await supabase.from('profiles').update({ last_reset_date: todayDateStr }).eq('id', user.id);
+                // Refresh local tasks after reset
+                const { data: resetTasks } = await supabase.from('tasks').select('*').eq('user_id', user.id).order('order_index');
+                if (resetTasks) setTasks(resetTasks);
             }
-            if (tasksRes.data) setTasks(tasksRes.data);
-            if (activityRes.data) setActivity(activityRes.data);
-            
-            setIsDataLoaded(true);
-        };
+        } else {
+            const { data: newProfile } = await supabase.from('profiles').insert([{ id: user.id, last_reset_date: todayDateStr }]).select().single();
+            if (newProfile) setProfile(newProfile);
+        }
+        if (tasksRes.data) setTasks(tasksRes.data);
+        if (activityRes.data) setActivity(activityRes.data);
         
-        loadAllData();
+        setIsDataLoaded(true);
+    }, [user?.id, todayDateStr]);
+
+    const updateProfile = useCallback(async (updates: Partial<typeof profile>) => {
+        setProfile((prev: any) => ({ ...prev, ...updates }));
+        await supabase.from('profiles').update(updates).eq('id', user.id);
     }, [user?.id]);
 
-    const todayDateStr = useMemo(() => new Date().toISOString().split('T')[0], []);
-    const isCompletedToday = profile.last_completed_date === todayDateStr;
-
-    // Easter Egg 1: Konami Code
-    useEffect(() => {
-        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-        let konamiIndex = 0;
-
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === konamiCode[konamiIndex]) {
-                konamiIndex++;
-                if (konamiIndex === konamiCode.length) {
-                    konamiIndex = 0;
-                    triggerSuperConfetti();
-                }
-            } else {
-                konamiIndex = 0;
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
+    const triggerConfetti = useCallback(() => {
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
     }, []);
 
     const triggerSuperConfetti = useCallback(() => {
@@ -109,23 +101,14 @@ export default function Dashboard({ session }: { session: any }) {
         }
     }, []);
 
-    const updateProfile = useCallback(async (updates: Partial<typeof profile>) => {
-        setProfile((prev: any) => ({ ...prev, ...updates }));
-        await supabase.from('profiles').update(updates).eq('id', user.id);
-    }, [user?.id]);
-
-    const triggerConfetti = useCallback(() => {
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-    }, []);
-
     // Queue system for Activity DB requests to avoid Race Conditions
     const activityQueue = useRef<number>(0);
     const isProcessingQueue = useRef<boolean>(false);
 
-    const pullActivity = async () => {
+    const pullActivity = useCallback(async () => {
         const { data } = await supabase.from('daily_activity').select('*').eq('user_id', user.id);
         if (data) setActivity(data);
-    };
+    }, [user?.id]);
 
     const processActivityQueue = useCallback(async () => {
         if (isProcessingQueue.current) return;
@@ -146,31 +129,28 @@ export default function Dashboard({ session }: { session: any }) {
         
         await pullActivity();
         isProcessingQueue.current = false;
-    }, [user?.id, todayDateStr]);
+    }, [user?.id, todayDateStr, pullActivity]);
 
     const queueActivityDelta = useCallback((delta: number) => {
         activityQueue.current += delta;
         processActivityQueue();
     }, [processActivityQueue]);
 
-    const logActivity = useCallback(() => queueActivityDelta(1), [queueActivityDelta]);
-    const removeActivity = useCallback(() => queueActivityDelta(-1), [queueActivityDelta]);
+    const logActivity = useCallback(() => {
+        setActivity(prev => {
+            const existing = prev.find(a => a.date === todayDateStr);
+            if (existing) return prev.map(a => a.date === todayDateStr ? { ...a, activity_level: a.activity_level + 1 } : a);
+            return [...prev, { date: todayDateStr, activity_level: 1 }];
+        });
+        queueActivityDelta(1);
+    }, [queueActivityDelta, todayDateStr]);
 
-    const handleLogProgress = useCallback(() => {
-        const newProgress = profile.neetcode_progress + 1;
-        updateProfile({ neetcode_progress: newProgress });
-        logActivity();
-        const target = profile.tracker_target || 150;
-        if (newProgress > 0 && newProgress % Math.max(1, Math.floor(target/10)) === 0) triggerConfetti();
-        if (newProgress === target) triggerConfetti();
-    }, [profile.neetcode_progress, profile.tracker_target, updateProfile, logActivity, triggerConfetti]);
+    const removeActivity = useCallback(() => {
+        setActivity(prev => prev.map(a => a.date === todayDateStr ? { ...a, activity_level: Math.max(0, a.activity_level - 1) } : a));
+        queueActivityDelta(-1);
+    }, [queueActivityDelta, todayDateStr]);
 
-    const handleUndoProgress = useCallback(() => {
-        if (profile.neetcode_progress > 0) {
-            updateProfile({ neetcode_progress: profile.neetcode_progress - 1 });
-            removeActivity();
-        }
-    }, [profile.neetcode_progress, updateProfile, removeActivity]);
+    const isCompletedToday = profile?.last_completed_date === todayDateStr;
 
     const handleMarkDayComplete = useCallback(() => {
         if (isCompletedToday) return;
@@ -194,6 +174,84 @@ export default function Dashboard({ session }: { session: any }) {
         removeActivity();
     }, [isCompletedToday, profile.streak, updateProfile, removeActivity]);
 
+    useEffect(() => {
+        loadAllData();
+
+        const profileChannel = supabase.channel('profile_changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${user?.id}` }, payload => {
+                setProfile((prev: any) => ({ ...prev, ...payload.new }));
+            }).subscribe();
+
+        const tasksChannel = supabase.channel('task_changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks', filter: `user_id=eq.${user?.id}` }, () => {
+                loadAllData();
+            }).subscribe();
+
+        const activityChannel = supabase.channel('activity_changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'daily_activity', filter: `user_id=eq.${user?.id}` }, () => {
+                pullActivity();
+            }).subscribe();
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') loadAllData();
+        };
+        window.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            supabase.removeChannel(profileChannel);
+            supabase.removeChannel(tasksChannel);
+            supabase.removeChannel(activityChannel);
+            window.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [user?.id, loadAllData, pullActivity]);
+
+    useEffect(() => {
+        if (!isDataLoaded || !user) return;
+        
+        const hasCompletedTasks = tasks.some(t => t.completed);
+        if (hasCompletedTasks && !isCompletedToday) {
+            handleMarkDayComplete();
+        } else if (!hasCompletedTasks && isCompletedToday) {
+            handleUndoDayComplete();
+        }
+    }, [tasks, isCompletedToday, handleMarkDayComplete, handleUndoDayComplete, isDataLoaded, user]);
+
+    useEffect(() => {
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    konamiIndex = 0;
+                    triggerSuperConfetti();
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [triggerSuperConfetti]);
+
+    const handleLogProgress = useCallback(() => {
+        const newProgress = profile.neetcode_progress + 1;
+        updateProfile({ neetcode_progress: newProgress });
+        logActivity();
+        const target = profile.tracker_target || 150;
+        if (newProgress > 0 && newProgress % Math.max(1, Math.floor(target/10)) === 0) triggerConfetti();
+        if (newProgress === target) triggerConfetti();
+    }, [profile.neetcode_progress, profile.tracker_target, updateProfile, logActivity, triggerConfetti]);
+
+    const handleUndoProgress = useCallback(() => {
+        if (profile.neetcode_progress > 0) {
+            updateProfile({ neetcode_progress: profile.neetcode_progress - 1 });
+            removeActivity();
+        }
+    }, [profile.neetcode_progress, updateProfile, removeActivity]);
+
     const handleToggleTask = useCallback(async (taskId: string, completed: boolean) => {
         setTasks((prev: any) => prev.map((t: any) => t.id === taskId ? { ...t, completed } : t));
         await supabase.from('tasks').update({ completed }).eq('id', taskId);
@@ -215,12 +273,13 @@ export default function Dashboard({ session }: { session: any }) {
         await supabase.from('tasks').delete().eq('id', taskId);
     }, [tasks, removeActivity]);
 
-    const handleSaveTaskOrder = useCallback((reorderedTasks: Task[]) => {
+    const handleSaveTaskOrder = useCallback(async (reorderedTasks: Task[]) => {
         setTasks(reorderedTasks);
-        reorderedTasks.forEach(async (task) => {
-            await supabase.from('tasks').update({ order_index: task.order_index }).eq('id', task.id);
-        });
-    }, []);
+        const { error } = await supabase.from('tasks').upsert(
+            reorderedTasks.map(t => ({ ...t, user_id: user.id }))
+        );
+        if (error) console.error("Order sync failed", error);
+    }, [user?.id]);
 
     const handleSaveSettingsOptions = useCallback((name: string, target: number) => updateProfile({ tracker_name: name, tracker_target: target }), [updateProfile]);
 
@@ -277,18 +336,19 @@ export default function Dashboard({ session }: { session: any }) {
     const handleReset = useCallback(async () => {
         await supabase.from('tasks').delete().eq('user_id', user.id);
         await supabase.from('daily_activity').delete().eq('user_id', user.id);
+        setTasks([]);
+        setActivity([]);
         const resetProfile = {
             streak: 0,
             neetcode_progress: 0,
             last_completed_date: '',
+            last_reset_date: todayDateStr,
             tracker_name: 'NeetCode 150',
             tracker_target: 150
         };
         await updateProfile(resetProfile);
-        setTasks([]);
-        setActivity([]);
         setShowSettings(false);
-    }, [user?.id, updateProfile]);
+    }, [user?.id, updateProfile, todayDateStr]);
 
     const weeklyActivity = useMemo(() => activity.filter((a: DailyActivity) => {
         const diff = (new Date().getTime() - new Date(a.date).getTime()) / (1000 * 3600 * 24);
@@ -335,7 +395,7 @@ export default function Dashboard({ session }: { session: any }) {
                 <SettingsOverlay 
                     profile={profile}
                     onClose={() => setShowSettings(false)}
-                    onSaveName={(name: string) => updateProfile({ greeting_name: name })}
+                    onSaveSettings={(updates: any) => updateProfile(updates)}
                     onExport={handleExport}
                     onImport={handleImport}
                     onReset={handleReset}

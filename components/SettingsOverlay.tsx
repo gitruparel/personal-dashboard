@@ -6,23 +6,29 @@ import { useState, useRef } from 'react';
 export default function SettingsOverlay({ 
     profile, 
     onClose, 
-    onSaveName,
+    onSaveSettings,
     onExport,
     onImport,
     onReset
 }: { 
     profile: any,
     onClose: () => void,
-    onSaveName: (name: string) => void,
+    onSaveSettings: (updates: any) => void,
     onExport: () => void,
     onImport: (e: React.ChangeEvent<HTMLInputElement>) => void,
     onReset: () => void
 }) {
     const [name, setName] = useState(profile.greeting_name || '');
+    const [trackerName, setTrackerName] = useState(profile.tracker_name || 'NeetCode 150');
+    const [trackerTarget, setTrackerTarget] = useState(profile.tracker_target || 150);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleSave = () => {
-        onSaveName(name);
+        onSaveSettings({ 
+            greeting_name: name,
+            tracker_name: trackerName,
+            tracker_target: Number(trackerTarget)
+        });
         onClose();
     };
 
@@ -44,7 +50,24 @@ export default function SettingsOverlay({
                         placeholder="e.g. Swayam"
                         style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '12px', borderRadius: '8px', outline: 'none', marginTop: '10px', marginBottom: '20px' }}
                     />
-                    <button className="action-btn" style={{ marginTop: 0, padding: '12px' }} onClick={handleSave}>Save Name</button>
+
+                    <label style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Progress Tracker Name</label>
+                    <input 
+                        type="text" 
+                        value={trackerName}
+                        onChange={e => setTrackerName(e.target.value)}
+                        style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '12px', borderRadius: '8px', outline: 'none', marginTop: '10px', marginBottom: '20px' }}
+                    />
+
+                    <label style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Progress Target (Total Number)</label>
+                    <input 
+                        type="number" 
+                        value={trackerTarget}
+                        onChange={e => setTrackerTarget(Number(e.target.value))}
+                        style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '12px', borderRadius: '8px', outline: 'none', marginTop: '10px', marginBottom: '20px' }}
+                    />
+
+                    <button className="action-btn" style={{ marginTop: 0, padding: '12px' }} onClick={handleSave}>Save All Changes</button>
                 </div>
 
                 <div className="card" style={{ opacity: 1, animation: 'none', marginBottom: '24px' }}>
