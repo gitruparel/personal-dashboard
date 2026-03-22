@@ -175,20 +175,37 @@ export default function Dashboard({ session }: { session: any }) {
     }, [isCompletedToday, profile.streak, updateProfile, removeActivity]);
 
     useEffect(() => {
+        if (!user?.id) return;
+
         loadAllData();
 
-        const profileChannel = supabase.channel('profile_changes')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${user?.id}` }, payload => {
-                setProfile((prev: any) => ({ ...prev, ...payload.new }));
+        const profileChannel = supabase.channel(`profile_${user.id}`)
+            .on('postgres_changes', { 
+                event: '*', 
+                schema: 'public', 
+                table: 'profiles', 
+                filter: `id=eq.${user.id}` 
+            }, payload => {
+                if (payload.new) setProfile((prev: any) => ({ ...prev, ...payload.new }));
             }).subscribe();
 
-        const tasksChannel = supabase.channel('task_changes')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks', filter: `user_id=eq.${user?.id}` }, () => {
+        const tasksChannel = supabase.channel(`tasks_${user.id}`)
+            .on('postgres_changes', { 
+                event: '*', 
+                schema: 'public', 
+                table: 'tasks', 
+                filter: `user_id=eq.${user.id}` 
+            }, () => {
                 loadAllData();
             }).subscribe();
 
-        const activityChannel = supabase.channel('activity_changes')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'daily_activity', filter: `user_id=eq.${user?.id}` }, () => {
+        const activityChannel = supabase.channel(`activity_${user.id}`)
+            .on('postgres_changes', { 
+                event: '*', 
+                schema: 'public', 
+                table: 'daily_activity', 
+                filter: `user_id=eq.${user.id}` 
+            }, () => {
                 pullActivity();
             }).subscribe();
 
