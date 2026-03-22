@@ -158,7 +158,7 @@ export default function Dashboard({ session }: { session: any }) {
         let newStreak = profile.streak;
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayStr = yesterday.toISOString().split('T')[0];
+        const yesterdayStr = yesterday.toLocaleDateString('en-CA');
         
         if (profile.last_completed_date === yesterdayStr) newStreak += 1;
         else newStreak = 1; 
@@ -362,7 +362,7 @@ export default function Dashboard({ session }: { session: any }) {
     const historyDots = useMemo(() => Array.from({ length: 7 }, (_, i) => {
         const d = new Date();
         d.setDate(d.getDate() - (6 - i));
-        const dStr = d.toISOString().split('T')[0];
+        const dStr = d.toLocaleDateString('en-CA');
         return activity.some((a: DailyActivity) => a.date === dStr && a.activity_level > 0);
     }), [activity]);
 
