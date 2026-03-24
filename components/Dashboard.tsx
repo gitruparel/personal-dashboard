@@ -68,17 +68,6 @@ export default function Dashboard({ session }: { session: any }) {
                 needsUpdate = true;
             }
 
-            // 2. Explicit Streak Decay (If yesterday was missed and today isn't done yet)
-            // Truly check activity levels to confirm if yesterday was missed
-            const yesterdayActivity = activityRes.data?.find((a: any) => a.date === yesterdayStr);
-            const missedYesterday = (!yesterdayActivity || yesterdayActivity.activity_level === 0) && 
-                                   profileData.last_completed_date !== todayDateStr;
-            
-            if (missedYesterday && profileData.streak > 0) {
-                updates.streak = 0;
-                needsUpdate = true;
-            }
-
             if (needsUpdate) {
                 const { data: updatedProfile } = await supabase.from('profiles').update(updates).eq('id', user.id).select().single();
                 if (updatedProfile) profileData = updatedProfile;
@@ -182,38 +171,55 @@ export default function Dashboard({ session }: { session: any }) {
 
     const isCompletedToday = profile?.last_completed_date === todayDateStr;
 
-    const handleMarkDayComplete = useCallback(() => {
-        if (isCompletedToday) return;
+    const currentStreak = useMemo(() => {
+        if (!activity || activity.length === 0) return 0;
         
-        let newStreak = profile.streak;
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
         const yesterdayStr = yesterday.toLocaleDateString('en-CA');
         
-        if (profile.last_completed_date === yesterdayStr) newStreak += 1;
-        else newStreak = 1; 
+        const hasActivityToday = activity.some(a => a.date === todayDateStr && a.activity_level > 0);
+        const hasActivityYesterday = activity.some(a => a.date === yesterdayStr && a.activity_level > 0);
         
-        updateProfile({ streak: newStreak, last_completed_date: todayDateStr });
+        if (!hasActivityToday && !hasActivityYesterday) return 0;
+        
+        let streak = 0;
+        let checkDate = new Date(hasActivityToday ? todayDateStr : yesterdayStr);
+        
+        // Count backwards as long as we find consecutive activity
+        while (true) {
+            const dateStr = checkDate.toLocaleDateString('en-CA');
+            const dayRecord = activity.find(a => a.date === dateStr && a.activity_level > 0);
+            
+            if (dayRecord) {
+                streak++;
+                checkDate.setDate(checkDate.getDate() - 1);
+            } else {
+                break;
+            }
+        }
+        return streak;
+    }, [activity, todayDateStr]);
+
+    const handleMarkDayComplete = useCallback(() => {
+        if (isCompletedToday) return;
+        updateProfile({ last_completed_date: todayDateStr });
         logActivity();
         triggerConfetti();
-    }, [isCompletedToday, profile.streak, profile.last_completed_date, todayDateStr, updateProfile, logActivity, triggerConfetti]);
+    }, [isCompletedToday, todayDateStr, updateProfile, logActivity, triggerConfetti]);
 
     const handleUndoDayComplete = useCallback(() => {
         if (!isCompletedToday) return;
         
+        // Restore to yesterday if it exists in activity history
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
         const yesterdayStr = yesterday.toLocaleDateString('en-CA');
-        
-        // Find if they were active yesterday to restore the chain properly
         const wasActiveYesterday = activity.some(a => a.date === yesterdayStr && a.activity_level > 0);
-        
-        updateProfile({ 
-            streak: Math.max(0, profile.streak - 1), 
-            last_completed_date: wasActiveYesterday ? yesterdayStr : '' 
-        });
+
+        updateProfile({ last_completed_date: wasActiveYesterday ? yesterdayStr : '' });
         removeActivity();
-    }, [isCompletedToday, profile.streak, activity, updateProfile, removeActivity]);
+    }, [isCompletedToday, activity, updateProfile, removeActivity]);
 
     useEffect(() => {
         if (!user?.id) return;
@@ -463,7 +469,7 @@ export default function Dashboard({ session }: { session: any }) {
                 <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                     <div>
                         <div className="greeting" id="greeting" style={{ textTransform: 'capitalize' }}>
-                            {getDynamicGreeting(displayName, profile.streak, profile.neetcode_progress, profile.tracker_target)}
+                            {getDynamicGreeting(displayName, currentStreak, profile.neetcode_progress, profile.tracker_target)}
                         </div>
                         <div className="date-time" id="datetime">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
                     </div>
@@ -506,7 +512,7 @@ export default function Dashboard({ session }: { session: any }) {
 
                 <div className="right-panel">
                     <MemoStreakCard 
-                        streak={profile.streak} 
+                        streak={currentStreak} 
                         historyDots={historyDots}
                     />
                     
