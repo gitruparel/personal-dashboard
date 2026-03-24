@@ -69,7 +69,9 @@ export default function Dashboard({ session }: { session: any }) {
             }
 
             // 2. Explicit Streak Decay (If yesterday was missed and today isn't done yet)
-            const missedYesterday = profileData.last_completed_date !== yesterdayStr && 
+            // Truly check activity levels to confirm if yesterday was missed
+            const yesterdayActivity = activityRes.data?.find((a: any) => a.date === yesterdayStr);
+            const missedYesterday = (!yesterdayActivity || yesterdayActivity.activity_level === 0) && 
                                    profileData.last_completed_date !== todayDateStr;
             
             if (missedYesterday && profileData.streak > 0) {
@@ -198,9 +200,20 @@ export default function Dashboard({ session }: { session: any }) {
 
     const handleUndoDayComplete = useCallback(() => {
         if (!isCompletedToday) return;
-        updateProfile({ streak: Math.max(0, profile.streak - 1), last_completed_date: '' });
+        
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toLocaleDateString('en-CA');
+        
+        // Find if they were active yesterday to restore the chain properly
+        const wasActiveYesterday = activity.some(a => a.date === yesterdayStr && a.activity_level > 0);
+        
+        updateProfile({ 
+            streak: Math.max(0, profile.streak - 1), 
+            last_completed_date: wasActiveYesterday ? yesterdayStr : '' 
+        });
         removeActivity();
-    }, [isCompletedToday, profile.streak, updateProfile, removeActivity]);
+    }, [isCompletedToday, profile.streak, activity, updateProfile, removeActivity]);
 
     useEffect(() => {
         if (!user?.id) return;
