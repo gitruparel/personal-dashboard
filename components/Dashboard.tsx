@@ -40,8 +40,12 @@ export default function Dashboard({ session }: { session: any }) {
     const getTodayStr = useCallback(() => new Date().toLocaleDateString('en-CA'), []); // en-CA gives YYYY-MM-DD
     const todayDateStr = getTodayStr();
 
+    const isSyncing = useRef(true);
+
     const loadAllData = useCallback(async () => {
         if (!user) return;
+        isSyncing.current = true;
+        
         const [profileRes, tasksRes, activityRes] = await Promise.all([
             supabase.from('profiles').select('*').eq('id', user.id).single(),
             supabase.from('tasks').select('*').eq('user_id', user.id).order('order_index'),
@@ -49,23 +53,47 @@ export default function Dashboard({ session }: { session: any }) {
         ]);
 
         if (profileRes.data) {
-            setProfile(profileRes.data);
-            // Handle Daily Reset logic
-            if (profileRes.data.last_reset_date !== todayDateStr) {
+            let profileData = profileRes.data;
+            let needsUpdate = false;
+            let updates: any = {};
+
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = yesterday.toLocaleDateString('en-CA');
+
+            // 1. Daily Task Reset Logic
+            if (profileData.last_reset_date !== todayDateStr) {
                 await supabase.from('tasks').update({ completed: false }).eq('user_id', user.id);
-                await supabase.from('profiles').update({ last_reset_date: todayDateStr }).eq('id', user.id);
-                // Refresh local tasks after reset
-                const { data: resetTasks } = await supabase.from('tasks').select('*').eq('user_id', user.id).order('order_index');
-                if (resetTasks) setTasks(resetTasks);
+                updates.last_reset_date = todayDateStr;
+                needsUpdate = true;
             }
+
+            // 2. Explicit Streak Decay (If yesterday was missed and today isn't done yet)
+            const missedYesterday = profileData.last_completed_date !== yesterdayStr && 
+                                   profileData.last_completed_date !== todayDateStr;
+            
+            if (missedYesterday && profileData.streak > 0) {
+                updates.streak = 0;
+                needsUpdate = true;
+            }
+
+            if (needsUpdate) {
+                const { data: updatedProfile } = await supabase.from('profiles').update(updates).eq('id', user.id).select().single();
+                if (updatedProfile) profileData = updatedProfile;
+            }
+
+            setProfile(profileData);
         } else {
             const { data: newProfile } = await supabase.from('profiles').insert([{ id: user.id, last_reset_date: todayDateStr }]).select().single();
             if (newProfile) setProfile(newProfile);
         }
+
         if (tasksRes.data) setTasks(tasksRes.data);
         if (activityRes.data) setActivity(activityRes.data);
         
         setIsDataLoaded(true);
+        // Release the sync lock after a short delay to allow React state to settle
+        setTimeout(() => { isSyncing.current = false; }, 500);
     }, [user?.id, todayDateStr]);
 
     const updateProfile = useCallback(async (updates: Partial<typeof profile>) => {
@@ -223,7 +251,7 @@ export default function Dashboard({ session }: { session: any }) {
     }, [user?.id, loadAllData, pullActivity]);
 
     useEffect(() => {
-        if (!isDataLoaded || !user) return;
+        if (!isDataLoaded || !user || isSyncing.current) return;
         
         const hasCompletedTasks = tasks.some(t => t.completed);
         if (hasCompletedTasks && !isCompletedToday) {
