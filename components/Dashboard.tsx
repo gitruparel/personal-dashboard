@@ -204,9 +204,8 @@ export default function Dashboard({ session }: { session: any }) {
     const handleMarkDayComplete = useCallback(() => {
         if (isCompletedToday) return;
         updateProfile({ last_completed_date: todayDateStr });
-        logActivity();
         triggerConfetti();
-    }, [isCompletedToday, todayDateStr, updateProfile, logActivity, triggerConfetti]);
+    }, [isCompletedToday, todayDateStr, updateProfile, triggerConfetti]);
 
     const handleUndoDayComplete = useCallback(() => {
         if (!isCompletedToday) return;
@@ -218,8 +217,7 @@ export default function Dashboard({ session }: { session: any }) {
         const wasActiveYesterday = activity.some(a => a.date === yesterdayStr && a.activity_level > 0);
 
         updateProfile({ last_completed_date: wasActiveYesterday ? yesterdayStr : '' });
-        removeActivity();
-    }, [isCompletedToday, activity, updateProfile, removeActivity]);
+    }, [isCompletedToday, activity, updateProfile]);
 
     useEffect(() => {
         if (!user?.id) return;
