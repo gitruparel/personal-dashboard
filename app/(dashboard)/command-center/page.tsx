@@ -9,7 +9,6 @@ import { useActivity } from '@/hooks/useActivity';
 import { useMomentum } from '@/hooks/useMomentum';
 import Checklist from '@/components/Checklist';
 import LifeHeatmap from '@/components/modules/LifeHeatmap';
-import ProgressTrackerCard from '@/components/ProgressTrackerCard';
 import StreakCard from '@/components/StreakCard';
 import StatsCard from '@/components/StatsCard';
 import TrajectorySparkline from '@/components/modules/TrajectorySparkline';
@@ -25,7 +24,7 @@ export default function CommandCenter() {
   }, []);
 
   const userId = session?.user?.id;
-  const { profile, isLoading: profileLoading, updateProfile } = useProfile(userId);
+  const { profile, isLoading: profileLoading } = useProfile(userId);
   const { tasks, toggleTask, addTask, deleteTask, saveOrder } = useTasks(userId);
   const { activity, logActivity } = useActivity(userId);
   const { currentStreak, weeklyTasks, perfectDays, consistency, historyDots, trajectory } = useMomentum(activity);
@@ -37,20 +36,6 @@ export default function CommandCenter() {
   const handleToggleTask = async (id: string, completed: boolean) => {
     await toggleTask(id, completed);
     logActivity(completed ? 1 : -1);
-  };
-
-  const handleLogProgress = async () => {
-    const newProgress = (profile?.neetcode_progress || 0) + 1;
-    await updateProfile({ neetcode_progress: newProgress });
-    logActivity(1);
-  };
-
-  const handleUndoProgress = async () => {
-    const current = profile?.neetcode_progress || 0;
-    if (current > 0) {
-      await updateProfile({ neetcode_progress: current - 1 });
-      logActivity(-1);
-    }
   };
 
   const displayName = profile?.greeting_name || session.user?.user_metadata?.full_name?.split(' ')[0] || 'Builder';
@@ -67,14 +52,6 @@ export default function CommandCenter() {
       
       <div className="cc-grid" style={{ alignItems: 'start' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
-          <ProgressTrackerCard 
-            name={profile?.tracker_name || 'Project'}
-            target={profile?.tracker_target || 100}
-            progress={profile?.neetcode_progress || 0}
-            onLogProblem={handleLogProgress}
-            onUndo={handleUndoProgress}
-            onSaveSettings={(name, target) => updateProfile({ tracker_name: name, tracker_target: target })}
-          />
           <GlassCard className="cc-widget">
             <Checklist 
               tasks={tasks} 

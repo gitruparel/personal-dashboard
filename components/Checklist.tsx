@@ -2,13 +2,7 @@
 
 import { CheckSquare, Edit2, Check, Plus, Trash2, GripVertical, ChevronUp, ChevronDown } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-
-export type Task = {
-    id: string;
-    text: string;
-    completed: boolean;
-    order_index: number;
-};
+import { Task } from '@/services/taskService';
 
 export default function Checklist({ 
     tasks, 
@@ -18,10 +12,10 @@ export default function Checklist({
     onSaveOrder
 }: { 
     tasks: Task[], 
-    onToggle: (id: string, completed: boolean) => void,
-    onAdd: (text: string) => void,
-    onDelete: (id: string) => void,
-    onSaveOrder: (reorderedTasks: Task[]) => void
+    onToggle: (id: string, completed: boolean) => void | Promise<void>,
+    onAdd: (text: string) => void | Promise<void>,
+    onDelete: (id: string) => void | Promise<void>,
+    onSaveOrder: (reorderedTasks: Task[]) => void | Promise<void>
 }) {
     const [isEditing, setIsEditing] = useState(false);
     const [newTaskText, setNewTaskText] = useState('');
