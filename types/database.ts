@@ -254,7 +254,124 @@ export interface Database {
           created_at?: string
         }
       }
+      exercises: {
+        Row: {
+          id: string
+          name: string
+          muscle_group: string
+          equipment: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          muscle_group: string
+          equipment?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          muscle_group?: string
+          equipment?: string | null
+          created_at?: string
+        }
+      }
+      routines: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          notes: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          notes?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          notes?: string | null
+          created_at?: string
+        }
+      }
+      workout_sessions: {
+        Row: {
+          id: string
+          user_id: string
+          routine_id: string | null
+          name: string
+          start_time: string
+          end_time: string | null
+          volume: number | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          routine_id?: string | null
+          name: string
+          start_time?: string
+          end_time?: string | null
+          volume?: number | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          routine_id?: string | null
+          name?: string
+          start_time?: string
+          end_time?: string | null
+          volume?: number | null
+          created_at?: string
+        }
+      }
+      workout_sets: {
+        Row: {
+          id: string
+          session_id: string
+          exercise_id: string
+          set_number: number
+          reps: number | null
+          weight: number | null
+          rpe: number | null
+          is_warmup: boolean | null
+          completed: boolean | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          exercise_id: string
+          set_number: number
+          reps?: number | null
+          weight?: number | null
+          rpe?: number | null
+          is_warmup?: boolean | null
+          completed?: boolean | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          exercise_id?: string
+          set_number?: number
+          reps?: number | null
+          weight?: number | null
+          rpe?: number | null
+          is_warmup?: boolean | null
+          completed?: boolean | null
+          created_at?: string
+        }
+      }
     }
+
 
     Views: {
       [_ in never]: never

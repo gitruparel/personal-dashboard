@@ -17,7 +17,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Link href="/command-center" style={{ textDecoration: 'none' }}>
             <li className={`nav-item ${pathname === '/command-center' ? 'active' : ''}`}><Home size={18} /> Command Center</li>
           </Link>
-          <li className="nav-item"><Activity size={18} /> Workouts</li>
+          <Link href="/workouts" style={{ textDecoration: 'none' }}>
+            <li className={`nav-item ${pathname === '/workouts' ? 'active' : ''}`}><Activity size={18} /> Workouts</li>
+          </Link>
           <Link href="/goals" style={{ textDecoration: 'none' }}>
             <li className={`nav-item ${pathname === '/goals' ? 'active' : ''}`}><Target size={18} /> Goals</li>
           </Link>
