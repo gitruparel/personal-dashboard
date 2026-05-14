@@ -23,7 +23,7 @@
 
 .new-project-btn {
   background: var(--accent-primary);
-  color: var(--bg-main);
+  color: var(--bg-base);
   border: none;
   padding: 8px 16px;
   border-radius: var(--radius-sm);

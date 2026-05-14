@@ -23,7 +23,7 @@
 
 .new-goal-btn {
   background: var(--accent-primary);
-  color: var(--bg-main);
+  color: var(--bg-base);
   border: none;
   padding: 8px 16px;
   border-radius: var(--radius-sm);
@@ -96,12 +96,41 @@
 
 .goal-children {
   margin-top: var(--spacing-md);
-  padding-left: var(--spacing-lg);
-  border-left: 2px solid var(--border-color);
+  padding-left: var(--spacing-xl);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
 }
+
+.goal-node-wrapper {
+  position: relative;
+}
+
+.goal-children .goal-node-wrapper::before {
+  content: '';
+  position: absolute;
+  left: -24px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border-color);
+}
+
+.goal-children .goal-node-wrapper:last-child::before {
+  bottom: auto;
+  height: 40px;
+}
+
+.goal-children .goal-node-wrapper::after {
+  content: '';
+  position: absolute;
+  left: -24px;
+  top: 40px;
+  width: 16px;
+  height: 2px;
+  background: var(--border-color);
+}
+
 
 /* Modal */
 .modal-overlay {
