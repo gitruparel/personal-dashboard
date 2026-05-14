@@ -1,6 +1,7 @@
-alter table public.profiles 
-  add column if not exists greeting_name text,
-  add column if not exists tracker_name text default 'NeetCode 150',
-  add column if not exists tracker_target integer default 150;
+-- Update the profiles table to include the new Personal Operating System fields
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS momentum_score integer DEFAULT 0,
+ADD COLUMN IF NOT EXISTS current_season text,
+ADD COLUMN IF NOT EXISTS timezone text;
 
-create policy "Users can delete their own activity" on daily_activity for delete using (auth.uid() = user_id);
+-- (The other tables for goals, projects, workouts, etc. will be added in later phases)
