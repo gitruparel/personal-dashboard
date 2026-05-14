@@ -1,0 +1,117 @@
+.life-heatmap-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.heatmap-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.heatmap-header h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.heatmap-legend span {
+  margin: 0 4px;
+}
+
+.heatmap-grid-wrapper {
+  display: flex;
+  gap: var(--spacing-sm);
+  overflow-x: auto;
+  padding-bottom: var(--spacing-sm);
+}
+
+/* Hide scrollbar for a cleaner look */
+.heatmap-grid-wrapper::-webkit-scrollbar {
+  height: 4px;
+}
+.heatmap-grid-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+.heatmap-grid-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-sm);
+}
+
+.heatmap-weekdays {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 14px; /* Offset for the top row to align Mon/Wed/Fri */
+  padding-bottom: 14px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-align: right;
+  min-width: 25px;
+}
+
+.heatmap-grid {
+  display: flex;
+  gap: 3px;
+}
+
+.heatmap-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.heatmap-square {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: pointer;
+}
+
+.heatmap-square:hover:not(.empty) {
+  transform: scale(1.2);
+  z-index: 2;
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.heatmap-square.empty {
+  background: transparent;
+  pointer-events: none;
+}
+
+.heatmap-square.level-0 {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Linear-style premium glowing colors instead of pure greens */
+.heatmap-square.level-1 {
+  background: rgba(57, 211, 83, 0.4);
+}
+
+.heatmap-square.level-2 {
+  background: rgba(57, 211, 83, 0.6);
+}
+
+.heatmap-square.level-3 {
+  background: rgba(57, 211, 83, 0.8);
+}
+
+.heatmap-square.level-4 {
+  background: rgba(57, 211, 83, 1);
+  box-shadow: 0 0 4px rgba(57, 211, 83, 0.5);
+}

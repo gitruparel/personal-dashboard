@@ -1,0 +1,67 @@
+.trajectory-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  width: fit-content;
+}
+
+.trajectory-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trend-rising {
+  color: #39d353;
+}
+
+.trend-declining {
+  color: #ff4444;
+}
+
+.trend-plateau {
+  color: #a0a0a0;
+}
+
+.trend-stagnant {
+  color: #606060;
+}
+
+.trajectory-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.trajectory-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.trajectory-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.trajectory-sparkline-wrapper {
+  margin-left: var(--spacing-sm);
+  color: var(--text-secondary);
+  opacity: 0.7;
+  display: flex;
+  align-items: center;
+}
+
+.trajectory-container:hover .trajectory-sparkline-wrapper {
+  opacity: 1;
+  color: var(--text-primary);
+}

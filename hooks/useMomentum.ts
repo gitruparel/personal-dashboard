@@ -48,11 +48,34 @@ export function useMomentum(activity: DailyActivity[]) {
     return activity.some(a => a.date === dStr && a.activity_level > 0);
   }), [activity]);
 
+  const trajectory = useMemo(() => {
+    // 7-day average vs 30-day average
+    const thirtyDayActivity = activity.filter(a => {
+        const diff = (new Date().getTime() - new Date(a.date).getTime()) / (1000 * 3600 * 24);
+        return diff <= 30 && diff >= 0;
+    });
+
+    const thirtyDayTotal = thirtyDayActivity.reduce((acc, curr) => acc + curr.activity_level, 0);
+    const thirtyDayAvg = thirtyDayTotal / 30;
+    const sevenDayAvg = weeklyTasks / 7;
+
+    if (thirtyDayAvg === 0 && sevenDayAvg === 0) return 'Stagnant';
+    
+    // If 7-day average is significantly higher than 30-day average (> 120%)
+    if (sevenDayAvg > thirtyDayAvg * 1.2) return 'Rising';
+    
+    // If 7-day average is significantly lower (< 80%)
+    if (sevenDayAvg < thirtyDayAvg * 0.8) return 'Declining';
+    
+    return 'Plateauing';
+  }, [activity, weeklyTasks]);
+
   return {
     currentStreak,
     weeklyTasks,
     perfectDays,
     consistency,
-    historyDots
+    historyDots,
+    trajectory
   };
 }

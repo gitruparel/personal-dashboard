@@ -8,10 +8,11 @@ import { useTasks } from '@/hooks/useTasks';
 import { useActivity } from '@/hooks/useActivity';
 import { useMomentum } from '@/hooks/useMomentum';
 import Checklist from '@/components/Checklist';
-import ActivityGraph from '@/components/ActivityGraph';
+import LifeHeatmap from '@/components/modules/LifeHeatmap';
 import ProgressTrackerCard from '@/components/ProgressTrackerCard';
 import StreakCard from '@/components/StreakCard';
 import StatsCard from '@/components/StatsCard';
+import TrajectorySparkline from '@/components/modules/TrajectorySparkline';
 import { getDynamicGreeting } from '@/utils/greetings';
 
 export default function CommandCenter() {
@@ -27,7 +28,7 @@ export default function CommandCenter() {
   const { profile, isLoading: profileLoading, updateProfile } = useProfile(userId);
   const { tasks, toggleTask, addTask, deleteTask, saveOrder } = useTasks(userId);
   const { activity, logActivity } = useActivity(userId);
-  const { currentStreak, weeklyTasks, perfectDays, consistency, historyDots } = useMomentum(activity);
+  const { currentStreak, weeklyTasks, perfectDays, consistency, historyDots, trajectory } = useMomentum(activity);
 
   if (!session || profileLoading) {
     return <div style={{ padding: '2rem' }}>Loading Command Center...</div>;
@@ -56,9 +57,12 @@ export default function CommandCenter() {
 
   return (
     <div className="command-center-container">
-      <header className="cc-header">
-        <h1>{getDynamicGreeting(displayName, currentStreak, profile?.neetcode_progress || 0, profile?.tracker_target || 150)}</h1>
-        <p>Momentum Score: {profile?.momentum_score || 0} • Current Season: {profile?.current_season || 'Building'}</p>
+      <header className="cc-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <h1>{getDynamicGreeting(displayName, currentStreak, profile?.neetcode_progress || 0, profile?.tracker_target || 150)}</h1>
+          <p>Momentum Score: {profile?.momentum_score || 0} • Current Season: {profile?.current_season || 'Building'}</p>
+        </div>
+        <TrajectorySparkline activityData={activity} trajectory={trajectory} />
       </header>
       
       <div className="cc-grid" style={{ alignItems: 'start' }}>
@@ -83,11 +87,13 @@ export default function CommandCenter() {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
-          <StreakCard streak={currentStreak} historyDots={historyDots} />
-          <GlassCard className="cc-widget">
-            <ActivityGraph activityData={activity} />
+          <GlassCard className="cc-widget" style={{ padding: 'var(--spacing-md)' }}>
+            <LifeHeatmap activityData={activity} />
           </GlassCard>
-          <StatsCard weeklyTasks={weeklyTasks} perfectDays={perfectDays} consistency={consistency} />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-lg)' }}>
+            <StreakCard streak={currentStreak} historyDots={historyDots} />
+            <StatsCard weeklyTasks={weeklyTasks} perfectDays={perfectDays} consistency={consistency} />
+          </div>
         </div>
       </div>
     </div>

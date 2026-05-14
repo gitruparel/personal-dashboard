@@ -13,6 +13,7 @@ export interface Database {
         Row: {
           id: string
           momentum_score: number
+          trajectory: string
           current_season: string | null
           timezone: string | null
           // Legacy fields we are keeping for now to avoid breaking existing code
@@ -27,6 +28,7 @@ export interface Database {
         Insert: {
           id: string
           momentum_score?: number
+          trajectory?: string
           current_season?: string | null
           timezone?: string | null
           streak?: number
@@ -40,6 +42,7 @@ export interface Database {
         Update: {
           id?: string
           momentum_score?: number
+          trajectory?: string
           current_season?: string | null
           timezone?: string | null
           streak?: number
@@ -95,6 +98,61 @@ export interface Database {
           user_id?: string
           date?: string
           activity_level?: number
+        }
+      }
+      activity_logs: {
+        Row: {
+          id: string
+          user_id: string
+          date: string
+          created_at: string
+          type: 'workout' | 'learning' | 'build' | 'discipline' | 'journal'
+          value: number
+          metadata: Json | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          date: string
+          created_at?: string
+          type: 'workout' | 'learning' | 'build' | 'discipline' | 'journal'
+          value?: number
+          metadata?: Json | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          date?: string
+          created_at?: string
+          type?: 'workout' | 'learning' | 'build' | 'discipline' | 'journal'
+          value?: number
+          metadata?: Json | null
+        }
+      }
+      journal_entries: {
+        Row: {
+          id: string
+          user_id: string
+          date: string
+          created_at: string
+          type: 'daily' | 'weekly_review'
+          content: Json
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          date: string
+          created_at?: string
+          type: 'daily' | 'weekly_review'
+          content: Json
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          date?: string
+          created_at?: string
+          type?: 'daily' | 'weekly_review'
+          content?: Json
         }
       }
     }
