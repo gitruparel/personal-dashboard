@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import Dashboard from '@/components/Dashboard';
 
 export default function Home() {
   const [session, setSession] = useState<any>(null);
