@@ -27,6 +27,12 @@ export default function Home() {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (session && !loading) {
+      window.location.href = '/command-center';
+    }
+  }, [session, loading]);
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthMsg('Processing...');
@@ -89,5 +95,10 @@ export default function Home() {
     );
   }
 
-  return <Dashboard session={session} />;
+  // Fallback while redirecting
+  if (session) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'white' }}>Entering Workspace...</div>;
+  }
+
+  return null;
 }
