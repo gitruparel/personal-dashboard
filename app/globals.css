@@ -414,31 +414,53 @@ header {
 }
 
 .stats-card h3 {
-    margin: 0 0 20px 0;
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.9);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0 0 15px 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     padding-bottom: 10px;
+    font-family: 'Outfit', sans-serif !important;
 }
 
-.stat-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.7);
+.stats-table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.stat-row:last-child {
-    margin-bottom: 0;
+.stats-table tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.stats-table tr:last-child {
+    border-bottom: none;
+}
+
+.stats-table td {
+    padding: 14px 4px;
+    vertical-align: middle;
+}
+
+.stat-label {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 500;
+    text-align: left;
+    line-height: 1.3;
+}
+
+.stat-value-cell {
+    text-align: right;
+    width: 40px;
+    white-space: nowrap;
 }
 
 .stat-val {
     font-weight: 700;
-    color: #fff;
-    font-size: 1.1rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    color: #ffffff;
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px rgba(255,255,255,0.15);
+    font-family: 'Outfit', sans-serif !important;
 }
 
 /* Progress bar */

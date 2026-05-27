@@ -82,14 +82,12 @@
   left: 0;
   right: 0;
   height: calc(60px + env(safe-area-inset-top));
-  background: rgba(10, 10, 11, 0.6) !important;
+  background: #0a0a0b !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   align-items: center;
   padding: env(safe-area-inset-top) var(--spacing-md) 0 var(--spacing-md);
-  z-index: 90;
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  z-index: 999 !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
 }
 
 .hamburger {
@@ -212,7 +210,7 @@
   gap: var(--spacing-lg);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .cc-stats-grid {
     grid-template-columns: minmax(0, 1fr);
   }
