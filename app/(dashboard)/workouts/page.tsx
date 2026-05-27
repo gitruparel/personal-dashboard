@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
+import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
 import { useWorkouts } from '@/hooks/useWorkouts';
 import { useActivity } from '@/hooks/useActivity';
@@ -38,7 +39,23 @@ export default function WorkoutsPage() {
   const handleFinishWorkout = async () => {
     await finishWorkout();
     logActivity(1); // Log to momentum heatmap
-    alert('Workout complete! Momentum logged.');
+    
+    // Trigger double celebratory energetic confetti bursts
+    confetti({
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#ffffff', '#ff4444', '#39d353', '#ffffff']
+    });
+    
+    setTimeout(() => {
+      confetti({
+          particleCount: 100,
+          spread: 100,
+          origin: { y: 0.65 },
+          colors: ['#ffffff', '#ff4444', '#39d353', '#ffffff']
+      });
+    }, 200);
   };
 
   // Group active sets by exercise

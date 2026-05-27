@@ -3,6 +3,7 @@
 import { CheckSquare, Edit2, Check, Plus, Trash2, GripVertical, ChevronUp, ChevronDown } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { Task } from '@/services/taskService';
+import confetti from 'canvas-confetti';
 
 export default function Checklist({ 
     tasks, 
@@ -90,7 +91,20 @@ export default function Checklist({
                     <li 
                         key={task.id} 
                         className={`checklist-item ${task.completed && !isEditing ? 'done' : ''}`} 
-                        onClick={() => !isEditing && onToggle(task.id, !task.completed)}
+                        onClick={() => {
+                            if (!isEditing) {
+                                const nextState = !task.completed;
+                                if (nextState) {
+                                    confetti({
+                                        particleCount: 80,
+                                        spread: 60,
+                                        origin: { y: 0.8 },
+                                        colors: ['#ffffff', '#a0a0a0', '#39d353', '#ffffff']
+                                    });
+                                }
+                                onToggle(task.id, nextState);
+                            }
+                        }}
                         draggable={isEditing}
                         onDragStart={(e) => handleDragStart(e, task.id)}
                         onDragOver={(e) => handleDragOver(e, task.id)}

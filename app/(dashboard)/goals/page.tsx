@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
+import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
 import { useGoals } from '@/hooks/useGoals';
 import { GoalTimeframe } from '@/services/goalService';
@@ -70,7 +71,18 @@ export default function GoalsPage() {
             <select 
                 className="status-select" 
                 value={node.status} 
-                onChange={(e) => updateStatus(node.id, e.target.value as any)}
+                onChange={(e) => {
+                  const nextStatus = e.target.value as any;
+                  if (nextStatus === 'completed') {
+                      confetti({
+                          particleCount: 150,
+                          spread: 80,
+                          origin: { y: 0.6 },
+                          colors: ['#ffffff', '#34d399', '#60a5fa', '#fbbf24']
+                      });
+                  }
+                  updateStatus(node.id, nextStatus);
+                }}
             >
                 <option value="not_started">Not Started</option>
                 <option value="in_progress">In Progress</option>
