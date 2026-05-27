@@ -51,9 +51,6 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100dvh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
 }
 
 body::after {
@@ -699,4 +696,45 @@ header {
 /* Smooth high-inertia scrolling for all overflow containers on iOS */
 .pos-main-content, .modal-content, ::-webkit-scrollbar {
     -webkit-overflow-scrolling: touch;
+}
+
+/* --- Elite iOS Native Touch & Layout Resets --- */
+/* Lock down body overscroll elastic bounce, letting main content scroll cleanly */
+html, body {
+    overscroll-behavior: none;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+.pos-main-content {
+    overscroll-behavior-y: auto;
+}
+
+/* Eliminate tap delays on mobile browsers for instant, snappy clicks */
+button, 
+a, 
+.checklist-item, 
+.heatmap-square, 
+.btn-check, 
+.nav-item, 
+.hamburger {
+    touch-action: manipulation;
+}
+
+/* Hide number input spinners on iOS/Chrome/Safari to maximize horizontal set space */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Align modal backdrop pointer interaction */
+.modal-overlay {
+    cursor: pointer;
+}
+.modal-content {
+    cursor: default;
 }

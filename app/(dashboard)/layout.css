@@ -25,13 +25,19 @@
     left: 0;
     top: 0;
     bottom: 0;
+    width: 260px;
     transform: translateX(-100%);
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 0.3s ease, visibility 0.3s ease;
     padding-top: calc(var(--spacing-lg) + env(safe-area-inset-top)) !important;
     padding-bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom)) !important;
   }
 
   .pos-sidebar.open {
     transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
     box-shadow: 20px 0 50px rgba(0,0,0,0.5);
   }
 
@@ -113,6 +119,7 @@
   flex: 1;
   overflow-y: auto;
   padding: var(--spacing-xl);
+  min-width: 0;
 }
 
 /* Command Center specific styles */
@@ -145,6 +152,18 @@
   display: grid;
   grid-template-columns: 350px 1fr;
   gap: var(--spacing-lg);
+}
+
+.cc-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+@media (max-width: 600px) {
+  .cc-stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 1024px) {

@@ -67,7 +67,7 @@ export default function CommandCenter() {
           <GlassCard className="cc-widget" style={{ padding: 'var(--spacing-md)' }}>
             <LifeHeatmap activityData={activity} />
           </GlassCard>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-lg)' }}>
+          <div className="cc-stats-grid">
             <StreakCard streak={currentStreak} historyDots={historyDots} />
             <StatsCard weeklyTasks={weeklyTasks} perfectDays={perfectDays} consistency={consistency} />
           </div>
