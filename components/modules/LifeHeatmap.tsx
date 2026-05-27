@@ -57,7 +57,7 @@ export default function LifeHeatmap({ activityData }: LifeHeatmapProps) {
         weeksArray.push(currentWeek);
     }
 
-    return { weeks: weeksArray, maxLevel: max };
+    return { weeks: weeksArray.reverse(), maxLevel: max };
   }, [activityData]);
 
   const getIntensityClass = (level: number) => {
@@ -88,11 +88,6 @@ export default function LifeHeatmap({ activityData }: LifeHeatmapProps) {
       </div>
       
       <div className="heatmap-grid-wrapper">
-        <div className="heatmap-weekdays">
-            <span>Mon</span>
-            <span>Wed</span>
-            <span>Fri</span>
-        </div>
         <div className="heatmap-grid">
             {weeks.map((week, wIndex) => (
                 <div key={wIndex} className="heatmap-col">
