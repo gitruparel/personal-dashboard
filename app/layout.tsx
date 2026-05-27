@@ -12,6 +12,10 @@ export const metadata: Metadata = {
 
 export const viewport = {
   themeColor: '#050505',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({
@@ -27,13 +31,13 @@ export default function RootLayout({
             if ('serviceWorker' in navigator) {
               window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js');
-              });
+               });
             }
           `
         }} />
       </head>
       <body className={inter.className}>
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100dvh', overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
           <div className="orb orb-1" id="orb1"></div>
           <div className="orb orb-2" id="orb2"></div>
         </div>

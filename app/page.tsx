@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
 export default function Home() {
+  const router = useRouter();
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState('');
@@ -28,9 +30,9 @@ export default function Home() {
 
   useEffect(() => {
     if (session && !loading) {
-      window.location.href = '/command-center';
+      router.push('/command-center');
     }
-  }, [session, loading]);
+  }, [session, loading, router]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +49,7 @@ export default function Home() {
   };
 
   if (loading) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'white' }}>Loading Workspace...</div>;
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100dvh', color: 'white' }}>Loading Workspace...</div>;
   }
 
   if (!session) {
@@ -96,7 +98,7 @@ export default function Home() {
 
   // Fallback while redirecting
   if (session) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'white' }}>Entering Workspace...</div>;
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100dvh', color: 'white' }}>Entering Workspace...</div>;
   }
 
   return null;

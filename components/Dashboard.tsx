@@ -451,7 +451,7 @@ export default function Dashboard({ session }: { session: any }) {
     return (
         <>
             {showSignOutConfirm && (
-                <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100dvh', backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <div className="card" style={{ width: '90%', maxWidth: '400px', textAlign: 'center', padding: '40px 30px' }}>
                         <h2 style={{ justifyContent: 'center', marginBottom: '15px' }}>Sign Out?</h2>
                         <p style={{ color: 'var(--text-muted)', marginBottom: '30px', fontSize: '1.05rem', lineHeight: 1.5 }}>Are you sure you want to securely disconnect your workspace?</p>
