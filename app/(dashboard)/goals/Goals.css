@@ -184,3 +184,31 @@
   border-radius: var(--radius-sm);
   cursor: pointer;
 }
+
+@media (max-width: 768px) {
+  .goals-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  .new-goal-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .goal-children {
+    padding-left: 12px;
+  }
+  .goal-children .goal-node-wrapper::before {
+    left: -8px;
+  }
+  .goal-children .goal-node-wrapper:last-child::before {
+    height: 40px;
+  }
+  .goal-children .goal-node-wrapper::after {
+    left: -8px;
+    width: 6px;
+  }
+}

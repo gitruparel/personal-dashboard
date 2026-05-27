@@ -43,14 +43,14 @@ export default function ProgressTrackerCard({
                         type="text" 
                         value={editName}
                         onChange={e => setEditName(e.target.value)}
-                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '10px', borderRadius: '8px', outline: 'none' }}
+                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '10px', borderRadius: '8px', outline: 'none', fontSize: '16px' }}
                     />
                     <label style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '10px' }}>Target Number</label>
                     <input 
                         type="number" 
                         value={editTarget}
                         onChange={e => setEditTarget(e.target.value)}
-                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '10px', borderRadius: '8px', outline: 'none' }}
+                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '10px', borderRadius: '8px', outline: 'none', fontSize: '16px' }}
                     />
                 </div>
             </div>

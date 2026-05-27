@@ -677,3 +677,26 @@ header {
     50% { transform: scale(4); filter: blur(50px); opacity: 0.8; background: rgba(57, 211, 83, 0.8); }
     100% { transform: scale(0); filter: blur(100px); opacity: 0; }
 }
+
+/* --- iOS Mobile Safari Optimizations --- */
+/* Prevent dynamic address bar overflow overlays */
+.card-overlay, .modal-overlay, .settings-overlay {
+    height: 100dvh;
+}
+
+/* Force minimum 16px font size on mobile forms to prevent auto zoom-on-focus */
+@media screen and (max-width: 768px) {
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="password"],
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* Smooth high-inertia scrolling for all overflow containers on iOS */
+.pos-main-content, .modal-content, ::-webkit-scrollbar {
+    -webkit-overflow-scrolling: touch;
+}

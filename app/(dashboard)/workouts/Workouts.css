@@ -291,3 +291,50 @@
 .exercise-list-item:hover {
   background: rgba(255,255,255,0.05);
 }
+
+@media (max-width: 768px) {
+  .workouts-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  .workouts-header .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Position active sticky session under fixed mobile header */
+  .live-workout-header {
+    top: calc(60px + env(safe-area-inset-top));
+    padding: var(--spacing-sm) var(--spacing-md);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  .live-workout-header > div:last-child {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  /* Native bottom sheet modal on mobile/iPhone */
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal-content {
+    max-width: 100%;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    max-height: 85dvh;
+    animation: slideUp 0.3s cubic-bezier(0.32, 0.94, 0.6, 1) forwards;
+    padding-bottom: calc(var(--spacing-xl) + env(safe-area-inset-bottom));
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}

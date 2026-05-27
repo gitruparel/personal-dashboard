@@ -33,7 +33,7 @@ export default function SettingsOverlay({
     };
 
     return (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'var(--bg)', zIndex: 100, overflowY: 'auto', padding: '40px 20px' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'var(--bg)', zIndex: 100, overflowY: 'auto', padding: 'calc(40px + env(safe-area-inset-top)) 20px calc(40px + env(safe-area-inset-bottom)) 20px' }}>
             <div style={{ maxWidth: '600px', margin: '0 auto' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
                     <h1 style={{ fontSize: '2rem', fontWeight: 600 }}>Settings</h1>
@@ -48,7 +48,7 @@ export default function SettingsOverlay({
                         value={name}
                         onChange={e => setName(e.target.value)}
                         placeholder="e.g. Swayam"
-                        style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '12px', borderRadius: '8px', outline: 'none', marginTop: '10px', marginBottom: '20px' }}
+                        style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '12px', borderRadius: '8px', outline: 'none', marginTop: '10px', marginBottom: '20px', fontSize: '16px' }}
                     />
 
                     <label style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Progress Tracker Name</label>
@@ -56,7 +56,7 @@ export default function SettingsOverlay({
                         type="text" 
                         value={trackerName}
                         onChange={e => setTrackerName(e.target.value)}
-                        style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '12px', borderRadius: '8px', outline: 'none', marginTop: '10px', marginBottom: '20px' }}
+                        style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '12px', borderRadius: '8px', outline: 'none', marginTop: '10px', marginBottom: '20px', fontSize: '16px' }}
                     />
 
                     <label style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Progress Target (Total Number)</label>
@@ -64,7 +64,7 @@ export default function SettingsOverlay({
                         type="number" 
                         value={trackerTarget}
                         onChange={e => setTrackerTarget(Number(e.target.value))}
-                        style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '12px', borderRadius: '8px', outline: 'none', marginTop: '10px', marginBottom: '20px' }}
+                        style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '12px', borderRadius: '8px', outline: 'none', marginTop: '10px', marginBottom: '20px', fontSize: '16px' }}
                     />
 
                     <button className="action-btn" style={{ marginTop: 0, padding: '12px' }} onClick={handleSave}>Save All Changes</button>

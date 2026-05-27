@@ -1,6 +1,7 @@
 .pos-layout {
   display: flex;
   height: 100vh;
+  height: 100dvh;
   width: 100vw;
   background: var(--bg-base);
   color: var(--text-primary);
@@ -25,6 +26,8 @@
     top: 0;
     bottom: 0;
     transform: translateX(-100%);
+    padding-top: calc(var(--spacing-lg) + env(safe-area-inset-top)) !important;
+    padding-bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom)) !important;
   }
 
   .pos-sidebar.open {
@@ -34,7 +37,8 @@
 
   .pos-main-content {
     padding: var(--spacing-md) !important;
-    padding-top: 80px !important;
+    padding-top: calc(80px + env(safe-area-inset-top)) !important;
+    padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom)) !important;
   }
 
   .mobile-header {
@@ -48,13 +52,14 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 60px;
+  height: calc(60px + env(safe-area-inset-top));
   background: var(--bg-card);
   border-bottom: 1px solid var(--border-color);
   align-items: center;
-  padding: 0 var(--spacing-md);
+  padding: env(safe-area-inset-top) var(--spacing-md) 0 var(--spacing-md);
   z-index: 90;
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .hamburger {
@@ -118,6 +123,10 @@
 
 .cc-header {
   margin-bottom: var(--spacing-xl);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-md);
 }
 
 .cc-header h1 {
@@ -136,6 +145,17 @@
   display: grid;
   grid-template-columns: 350px 1fr;
   gap: var(--spacing-lg);
+}
+
+@media (max-width: 1024px) {
+  .cc-grid {
+    grid-template-columns: 1fr;
+  }
+  .cc-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
 }
 
 .cc-widget h2 {

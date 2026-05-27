@@ -1,6 +1,12 @@
 import { useMemo } from 'react';
 import { DailyActivity } from '@/services/activityService';
 
+// Timezone-safe local YYYY-MM-DD parser
+const parseLocalDate = (dateStr: string) => {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day);
+};
+
 export function useMomentum(activity: DailyActivity[]) {
   const todayDateStr = new Date().toLocaleDateString('en-CA');
   const yesterday = new Date();
@@ -16,7 +22,8 @@ export function useMomentum(activity: DailyActivity[]) {
     if (!hasActivityToday && !hasActivityYesterday) return 0;
     
     let streak = 0;
-    let checkDate = new Date(hasActivityToday ? todayDateStr : yesterdayStr);
+    const checkDateStr = hasActivityToday ? todayDateStr : yesterdayStr;
+    let checkDate = parseLocalDate(checkDateStr);
     
     while (true) {
       const dateStr = checkDate.toLocaleDateString('en-CA');
@@ -33,7 +40,10 @@ export function useMomentum(activity: DailyActivity[]) {
   }, [activity, todayDateStr, yesterdayStr]);
 
   const weeklyActivity = useMemo(() => activity.filter(a => {
-    const diff = (new Date().getTime() - new Date(a.date).getTime()) / (1000 * 3600 * 24);
+    const activityDate = parseLocalDate(a.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const diff = (today.getTime() - activityDate.getTime()) / (1000 * 3600 * 24);
     return diff <= 7 && diff >= 0;
   }), [activity]);
 
@@ -51,7 +61,10 @@ export function useMomentum(activity: DailyActivity[]) {
   const trajectory = useMemo(() => {
     // 7-day average vs 30-day average
     const thirtyDayActivity = activity.filter(a => {
-        const diff = (new Date().getTime() - new Date(a.date).getTime()) / (1000 * 3600 * 24);
+        const activityDate = parseLocalDate(a.date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const diff = (today.getTime() - activityDate.getTime()) / (1000 * 3600 * 24);
         return diff <= 30 && diff >= 0;
     });
 

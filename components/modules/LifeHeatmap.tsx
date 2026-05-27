@@ -26,14 +26,15 @@ export default function LifeHeatmap({ activityData }: LifeHeatmapProps) {
     const dayOfWeek = startDate.getDay();
     startDate.setDate(startDate.getDate() - dayOfWeek);
 
+    // Normalize hours to avoid partial day bounds issues
+    startDate.setHours(0, 0, 0, 0);
+    const todayNormalized = new Date(today);
+    todayNormalized.setHours(23, 59, 59, 999);
+
     let currentWeek: { date: string; level: number }[] = [];
     
-    // Generate up to today
-    const endTimestamp = today.getTime();
-    let currentTimestamp = startDate.getTime();
-
-    while (currentTimestamp <= endTimestamp) {
-        const d = new Date(currentTimestamp);
+    const d = new Date(startDate);
+    while (d <= todayNormalized) {
         const dateStr = d.toLocaleDateString('en-CA');
         const level = activityMap.get(dateStr) || 0;
         
@@ -44,7 +45,7 @@ export default function LifeHeatmap({ activityData }: LifeHeatmapProps) {
             currentWeek = [];
         }
 
-        currentTimestamp += 24 * 60 * 60 * 1000;
+        d.setDate(d.getDate() + 1);
     }
 
     // Push the final partial week

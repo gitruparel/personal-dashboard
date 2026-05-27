@@ -133,3 +133,9 @@
   color: var(--accent-primary);
   font-weight: bold;
 }
+
+@media (max-width: 768px) {
+  .journal-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -13,6 +13,11 @@ import StatsCard from './StatsCard';
 import SettingsOverlay from './SettingsOverlay';
 import { getDynamicGreeting } from '@/utils/greetings';
 
+const parseLocalDate = (dateStr: string) => {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day);
+};
+
 const MemoProgressTrackerCard = memo(ProgressTrackerCard);
 const MemoStreakCard = memo(StreakCard);
 const MemoChecklist = memo(Checklist);
@@ -185,7 +190,7 @@ export default function Dashboard({ session }: { session: any }) {
         if (!hasActivityToday && !hasActivityYesterday) return 0;
         
         let streak = 0;
-        let checkDate = new Date(hasActivityToday ? todayDateStr : yesterdayStr);
+        let checkDate = parseLocalDate(hasActivityToday ? todayDateStr : yesterdayStr);
         
         // Count backwards as long as we find consecutive activity
         while (true) {
@@ -414,7 +419,10 @@ export default function Dashboard({ session }: { session: any }) {
     }, [user?.id, updateProfile, todayDateStr]);
 
     const weeklyActivity = useMemo(() => activity.filter((a: DailyActivity) => {
-        const diff = (new Date().getTime() - new Date(a.date).getTime()) / (1000 * 3600 * 24);
+        const activityDate = parseLocalDate(a.date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const diff = (today.getTime() - activityDate.getTime()) / (1000 * 3600 * 24);
         return diff <= 7 && diff >= 0;
     }), [activity]);
 

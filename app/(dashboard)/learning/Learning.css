@@ -193,3 +193,15 @@
   border-radius: var(--radius-sm);
   cursor: pointer;
 }
+
+@media (max-width: 768px) {
+  .learning-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  .new-topic-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

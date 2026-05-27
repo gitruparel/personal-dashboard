@@ -42,7 +42,7 @@ export default function CommandCenter() {
 
   return (
     <div className="command-center-container">
-      <header className="cc-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <header className="cc-header">
         <div>
           <h1>{getDynamicGreeting(displayName, currentStreak, profile?.neetcode_progress || 0, profile?.tracker_target || 150)}</h1>
           <p>Momentum Score: {profile?.momentum_score || 0} • Current Season: {profile?.current_season || 'Building'}</p>
