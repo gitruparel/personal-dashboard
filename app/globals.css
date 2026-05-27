@@ -211,7 +211,8 @@ header {
     .container {
         padding: 20px 15px;
     }
-    .card { padding: 22px; border-radius: 20px; }
+    .card { padding: var(--spacing-md) !important; border-radius: 16px !important; }
+    .stats-card { padding: var(--spacing-md) !important; border-radius: 16px !important; margin-top: 16px !important; }
     
     header {
         margin-bottom: 30px;

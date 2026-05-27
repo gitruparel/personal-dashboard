@@ -26,6 +26,8 @@
     display: block !important;
     width: 100% !important;
     max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
   }
 
   .pos-sidebar {
@@ -54,6 +56,8 @@
     max-width: 100% !important;
     margin: 0 auto !important;
     box-sizing: border-box !important;
+    height: auto !important;
+    overflow-y: visible !important;
     padding: var(--spacing-md) !important;
     padding-top: calc(80px + env(safe-area-inset-top)) !important;
     padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom)) !important;
@@ -165,25 +169,25 @@
 
 .cc-grid {
   display: grid;
-  grid-template-columns: 350px 1fr;
+  grid-template-columns: 350px minmax(0, 1fr);
   gap: var(--spacing-lg);
 }
 
 .cc-stats-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--spacing-lg);
 }
 
 @media (max-width: 600px) {
   .cc-stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @media (max-width: 1024px) {
   .cc-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .cc-header {
     flex-direction: column;

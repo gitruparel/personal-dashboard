@@ -14,3 +14,10 @@
   box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.6);
   border-color: rgba(255, 255, 255, 0.15);
 }
+
+@media (max-width: 600px) {
+  .glass-card {
+    padding: var(--spacing-md) !important;
+    border-radius: var(--radius-md) !important;
+  }
+}
