@@ -700,10 +700,8 @@ header {
 /* --- Elite iOS Native Touch & Layout Resets --- */
 /* Lock down body overscroll elastic bounce, letting main content scroll cleanly */
 html, body {
-    overscroll-behavior: none;
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
 }
 
 .pos-main-content {

@@ -27,7 +27,8 @@
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
-    overflow: visible !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
   }
 
   .pos-sidebar {
@@ -57,11 +58,11 @@
     margin: 0 auto !important;
     box-sizing: border-box !important;
     height: auto !important;
+    overflow-x: hidden !important;
     overflow-y: visible !important;
     padding: var(--spacing-md) !important;
     padding-top: calc(80px + env(safe-area-inset-top)) !important;
     padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom)) !important;
-    overflow-x: hidden !important;
   }
 
   .mobile-header {
