@@ -52,15 +52,13 @@ export default function CommandCenter() {
       
       <div className="cc-grid" style={{ alignItems: 'start' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
-          <GlassCard className="cc-widget">
-            <Checklist 
-              tasks={tasks} 
-              onToggle={handleToggleTask} 
-              onAdd={addTask} 
-              onDelete={deleteTask}
-              onSaveOrder={saveOrder}
-            />
-          </GlassCard>
+          <Checklist 
+            tasks={tasks} 
+            onToggle={handleToggleTask} 
+            onAdd={addTask} 
+            onDelete={deleteTask}
+            onSaveOrder={saveOrder}
+          />
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
