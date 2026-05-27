@@ -2,7 +2,9 @@
   display: flex;
   height: 100vh;
   height: 100dvh;
-  width: 100vw;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   background: var(--bg-base);
   color: var(--text-primary);
   overflow: hidden;
@@ -22,6 +24,8 @@
 @media (max-width: 768px) {
   .pos-layout {
     display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   .pos-sidebar {
@@ -46,6 +50,10 @@
   }
 
   .pos-main-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
     padding: var(--spacing-md) !important;
     padding-top: calc(80px + env(safe-area-inset-top)) !important;
     padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom)) !important;

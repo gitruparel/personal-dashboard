@@ -203,13 +203,11 @@ header {
 }
 
 @media (max-width: 800px) {
-    body { padding: 40px 15px; }
     .card { grid-column: span 12; }
     .greeting { font-size: 2.2rem; }
 }
 
 @media (max-width: 600px) {
-    body { padding: 25px 12px; }
     .container {
         padding: 20px 15px;
     }
@@ -702,7 +700,8 @@ header {
 /* Lock down body overscroll elastic bounce, letting main content scroll cleanly */
 html, body {
     overscroll-behavior: none;
-    max-width: 100vw;
+    width: 100%;
+    max-width: 100%;
     overflow-x: hidden;
 }
 
